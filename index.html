@@ -1,0 +1,1886 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vehículos Sustitución · Grupo Motorcar</title>
+<style>
+:root{--gold:#C0392B;--gold-d:#A93226;--jm:#27AE60;--jm-d:#1E8449;--jm-bg:rgba(39,174,96,.15);--dc:#E67E22;--dc-d:#CA6F1E;--dc-bg:rgba(230,126,34,.15);--rm:#8E44AD;--rm-d:#6C3483;--rm-bg:rgba(142,68,173,.15);--red:#e74c3c;--blue:#3498db;--card:#111;--card2:#181818;--border:#222;--border2:#2e2e2e;--text:#e8e8e8;--text2:#888;--text3:#444}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#080808;color:var(--text);display:flex;min-height:100vh;font-size:14px}
+
+/* SIDEBAR */
+.sidebar{width:220px;min-height:100vh;background:#050505;display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;z-index:100}
+.sidebar-logo{padding:16px 14px 12px;border-bottom:1px solid var(--border)}
+.sidebar-logo h1{color:#fff;font-size:14px;font-weight:700;line-height:1.3}
+.sidebar-logo p{color:var(--text2);font-size:10px;margin-top:2px}
+.sidebar-nav{flex:1;padding:10px 8px;display:flex;flex-direction:column;gap:2px}
+.nav-section{color:var(--text3);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:10px 10px 4px;margin-top:4px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;cursor:pointer;color:var(--text2);font-size:13px;font-weight:500;transition:all .15s;border:none;background:none;width:100%;text-align:left;white-space:nowrap;font-family:inherit}
+.nav-item:hover{background:var(--card);color:var(--text)}
+.nav-item.active{background:var(--gold);color:#fff;font-weight:700}
+.nav-item .ni{font-size:15px;width:19px;text-align:center;flex-shrink:0}
+.nav-item .nb{margin-left:auto;background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:10px;min-width:16px;text-align:center;display:none}
+.sidebar-foot{padding:10px 14px;border-top:1px solid var(--border);font-size:10px;color:var(--text3)}
+
+/* MAIN */
+.main{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{background:#0a0a0a;border-bottom:1px solid var(--border);padding:0 20px;height:54px;display:flex;align-items:center;justify-content:space-between;gap:14px;position:sticky;top:0;z-index:50}
+.topbar-title{font-size:16px;font-weight:700;color:#fff}
+.topbar-actions{display:flex;gap:8px;align-items:center}
+.content{padding:20px;flex:1}
+
+/* STAT CHIPS — estilo screenshot */
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.stat-chip{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;text-align:center;cursor:pointer;transition:border-color .15s}
+.stat-chip:hover{border-color:var(--border2)}
+.stat-num{font-size:32px;font-weight:800;line-height:1;margin-bottom:4px}
+.stat-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text2)}
+.stat-chip.gold .stat-num{color:var(--gold)}
+.stat-chip.jm .stat-num{color:var(--jm)}
+.stat-chip.dc .stat-num{color:var(--dc)}
+.stat-chip.rm .stat-num{color:var(--rm)}
+.stat-chip.red .stat-num{color:var(--red)}
+.stat-chip.blue .stat-num{color:var(--blue)}
+.stat-chip.white .stat-num{color:#fff}
+
+/* WEEK GRID */
+.week-panel{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px}
+.week-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.week-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text2)}
+.week-nav{display:flex;align-items:center;gap:6px}
+.week-nav button{background:var(--card2);border:1px solid var(--border);border-radius:6px;width:26px;height:26px;cursor:pointer;font-size:12px;color:var(--text2);display:flex;align-items:center;justify-content:center}
+.week-nav button:hover{border-color:var(--gold);color:var(--gold)}
+.week-lbl{font-size:11px;font-weight:600;color:var(--text);min-width:130px;text-align:center}
+.week-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.week-day{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:8px 6px;min-height:70px}
+.week-day-name{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:6px;text-align:center}
+.week-chip{font-size:10px;font-weight:600;padding:2px 5px;border-radius:4px;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.week-chip.jm{background:var(--jm-bg);color:var(--jm)}
+.week-chip.dc{background:var(--dc-bg);color:var(--dc)}
+.week-chip.rm{background:var(--rm-bg);color:var(--rm)}
+.week-chip.libre{background:#1a1a1a;color:var(--text3);font-size:9px;text-align:center;opacity:.5}
+
+/* DISPONIBLES / EN USO SECTIONS */
+.section-panel{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px}
+.section-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:12px}
+.veh-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;background:var(--card2);border:1px solid var(--border);margin-bottom:6px;cursor:pointer;transition:border-color .15s}
+.veh-row:last-child{margin-bottom:0}
+.veh-row:hover{border-color:var(--border2)}
+.veh-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.veh-dot.jm{background:var(--jm)}
+.veh-dot.dc{background:var(--dc)}
+.veh-dot.rm{background:var(--rm)}
+.veh-info{flex:1}
+.veh-plate{font-size:14px;font-weight:800;font-family:monospace;color:#fff}
+.veh-model{font-size:11px;color:var(--text2);margin-top:1px}
+.veh-km{font-size:10px;color:var(--text3);margin-top:1px}
+.veh-badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;flex-shrink:0}
+.badge-libre{background:rgba(39,174,96,.2);color:var(--jm)}
+.badge-uso{background:rgba(52,152,219,.2);color:var(--blue)}
+.badge-hoy{background:rgba(230,126,34,.25);color:var(--dc);animation:pulse 2s infinite}
+.badge-venc{background:rgba(231,76,60,.25);color:var(--red)}
+.badge-taller{background:rgba(255,255,255,.08);color:var(--text2)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+
+/* SUBSECTION DIVIDER */
+.sub-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:6px 0 8px;border-bottom:1px solid var(--border);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.sub-lbl .dot{width:7px;height:7px;border-radius:50%}
+
+/* ALERTS PANEL */
+.apanel{background:var(--card);border-radius:12px;border:1px solid var(--border)}
+.aitem{display:flex;align-items:flex-start;gap:12px;padding:11px 14px;border-bottom:1px solid var(--border)}
+.aitem:last-child{border-bottom:none}
+.aico{font-size:16px;flex-shrink:0;margin-top:1px}
+.atxt .atitle{font-size:13px;font-weight:600;color:var(--text)}
+.atxt .asub{font-size:11px;color:var(--text2);margin-top:2px}
+.aact{margin-left:auto;flex-shrink:0}
+
+/* TABLE */
+.tbox{background:var(--card);border-radius:12px;border:1px solid var(--border);overflow:hidden}
+table{width:100%;border-collapse:collapse}
+th{background:#161616;padding:9px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border)}
+td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle;color:var(--text)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#1f1f1f}
+
+/* BADGES */
+.bdg{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;gap:3px}
+.bg{background:rgba(39,174,96,.2);color:var(--jm)}
+.bb{background:rgba(52,152,219,.2);color:var(--blue)}
+.ba{background:rgba(230,126,34,.2);color:var(--dc)}
+.br{background:rgba(231,76,60,.2);color:var(--red)}
+.bk{background:rgba(255,255,255,.08);color:var(--text2)}
+.bo{background:rgba(230,126,34,.15);color:var(--dc)}
+.bp{background:rgba(155,89,182,.2);color:#9b59b6}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s;font-family:inherit}
+.btn-p{background:var(--gold);color:#fff}
+.btn-p:hover{background:var(--gold-d)}
+.btn-s{background:var(--card2);color:var(--text);border:1px solid var(--border)}
+.btn-s:hover{background:#2a2a2a;border-color:var(--border2)}
+.btn-g{background:var(--jm);color:#fff}
+.btn-g:hover{background:var(--jm-d)}
+.btn-d{background:var(--red);color:#fff}
+.btn-d:hover{background:#c0392b}
+.btn-sm{padding:4px 9px;font-size:11px;border-radius:6px}
+.btn-gh{background:none;color:var(--text2);padding:4px 7px;border:1px solid var(--border);cursor:pointer;font-family:inherit;font-size:11px;border-radius:6px;font-weight:600}
+.btn-gh:hover{background:var(--card2);color:var(--text)}
+
+/* FORMS */
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.fg{display:flex;flex-direction:column;gap:5px}
+.fg.full{grid-column:1/-1}
+label{font-size:12px;font-weight:600;color:var(--text2)}
+input,select,textarea{padding:8px 11px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;color:var(--text);background:var(--card2);font-family:inherit;width:100%;transition:border-color .15s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(243,156,18,.15)}
+textarea{resize:vertical;min-height:72px}
+select option{background:#1a1a1a;color:var(--text)}
+
+/* MODAL */
+.moverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:flex-start;justify-content:center;padding:36px 14px;overflow-y:auto}
+.moverlay.open{display:flex}
+.modal{background:var(--card);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:660px;box-shadow:0 24px 80px rgba(0,0,0,.6);overflow:hidden;margin:auto}
+.mhdr{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.mtitle{font-size:15px;font-weight:700;color:#fff}
+.mbody{padding:20px}
+.mfoot{padding:12px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+
+/* TABS */
+.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:16px}
+.tbbtn{padding:8px 14px;font-size:13px;font-weight:600;color:var(--text2);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;font-family:inherit}
+.tbbtn:hover{color:var(--gold)}
+.tbbtn.active{color:var(--gold);border-bottom-color:var(--gold)}
+.tbpanel{display:none}
+.tbpanel.active{display:block}
+
+/* TYPE SELECTOR */
+.typsel{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+.typo{padding:14px;border:2px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;transition:all .15s;background:var(--card2)}
+.typo:hover{border-color:var(--border2)}
+.typo.sel-jm{border-color:var(--jm);background:var(--jm-bg)}
+.typo.sel-dc{border-color:var(--dc);background:var(--dc-bg)}
+.typo .tyi{font-size:22px;margin-bottom:6px}
+.typo .tyn{font-size:14px;font-weight:700;color:#fff}
+.typo .tys{font-size:11px;color:var(--text2);margin-top:2px}
+
+/* CARD */
+.card{background:var(--card);border-radius:12px;border:1px solid var(--border);overflow:hidden}
+.card-hdr{padding:11px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-body{padding:16px}
+.ctitle{font-size:14px;font-weight:700;color:#fff}
+
+/* RECLAMACION CARD */
+.rcard{background:var(--card);border-radius:12px;border:1px solid var(--border);padding:14px;display:flex;flex-direction:column;gap:10px}
+.rcard-hdr{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.rcardtitle{font-size:14px;font-weight:700;color:#fff}
+.rcardsub{font-size:12px;color:var(--text2);margin-top:2px}
+.rdetails{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.rdet{display:flex;flex-direction:column;gap:2px}
+.rdet-lbl{font-size:9px;color:var(--text3);text-transform:uppercase;font-weight:700;letter-spacing:.05em}
+.rdet-val{font-size:13px;font-weight:600;color:var(--text)}
+
+/* EMPTY */
+.empty{text-align:center;padding:40px 14px;color:var(--text3)}
+.empty .ei{font-size:36px;margin-bottom:10px}
+.empty .et{font-size:14px;font-weight:600;color:var(--text2);margin-bottom:4px}
+.empty .es{font-size:12px}
+
+/* SECTION HEADER */
+.shdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.stitle{font-size:13px;font-weight:700;color:#fff}
+
+/* TOAST */
+.toasts{position:fixed;bottom:20px;right:20px;z-index:999;display:flex;flex-direction:column;gap:8px}
+.toast{background:#1a1a1a;color:#fff;border:1px solid var(--border2);padding:10px 14px;border-radius:10px;font-size:13px;font-weight:500;animation:tin .2s ease;max-width:280px}
+.toast.ts{background:#1a3a2a;border-color:var(--jm);color:var(--jm)}
+.toast.te{background:#3a1a1a;border-color:var(--red);color:var(--red)}
+.toast.tw{background:#2a1e0a;border-color:var(--gold);color:var(--gold)}
+@keyframes tin{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}
+
+/* INFO ROW */
+.irow{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px}
+.iitem{display:flex;flex-direction:column;gap:2px}
+.ilbl{font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.ival{font-size:14px;font-weight:600;color:var(--text)}
+
+/* STATUS SELECT */
+.sselect{padding:4px 8px;border-radius:6px;border:1px solid var(--border);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;background:var(--card2);color:var(--text)}
+
+/* 2COL */
+.tcol{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+/* HIGHLIGHT BOX */
+.hbox{background:var(--jm-bg);border-radius:10px;padding:12px 14px;margin-bottom:12px;border:1px solid rgba(39,174,96,.3)}
+.hbox.dc{background:var(--dc-bg);border-color:rgba(230,126,34,.3)}
+
+/* FOOTER GESTORES */
+.gestores-bar{text-align:center;font-size:10px;color:var(--text3);padding:10px 0 4px;letter-spacing:.05em}
+.gestores-bar span{color:var(--text2);font-weight:600}
+
+/* RESPONSIVE */
+@media(max-width:820px){
+  .sidebar{width:52px}
+  .sidebar-logo p,.nav-item span:not(.ni),.nav-item .nb,.nav-section,.sidebar-foot{display:none}
+  .main{margin-left:52px}
+  .stat-row{grid-template-columns:repeat(2,1fr)}
+  .fgrid{grid-template-columns:1fr}
+  .tcol{grid-template-columns:1fr}
+  .week-grid{grid-template-columns:repeat(5,1fr)}
+}
+@media(max-width:480px){
+  .stat-row{grid-template-columns:repeat(2,1fr)}
+  .typsel{grid-template-columns:1fr 1fr}
+  .content{padding:12px}
+  .week-grid{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <h1 style="color:var(--gold);font-size:13px;font-weight:800;letter-spacing:.04em;text-transform:uppercase">Motorcar JM</h1>
+    <p style="color:var(--text3);font-size:10px;margin-top:3px;text-transform:uppercase;letter-spacing:.06em">Coches de Movilidad</p>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Principal</div>
+    <button class="nav-item active" onclick="go('dashboard')" id="nav-dashboard">
+      <span class="ni">📊</span><span>Dashboard</span>
+    </button>
+    <button class="nav-item" onclick="go('asignaciones')" id="nav-asignaciones">
+      <span class="ni">📋</span><span>Asignaciones</span>
+      <span class="nb" id="nb-asig">0</span>
+    </button>
+    <button class="nav-item" onclick="go('devoluciones')" id="nav-devoluciones">
+      <span class="ni">🔄</span><span>Devoluciones</span>
+      <span class="nb" id="nb-dev">0</span>
+    </button>
+    <div class="nav-section">Derechocar</div>
+    <button class="nav-item" onclick="go('reclamaciones')" id="nav-reclamaciones">
+      <span class="ni">💼</span><span>Reclamaciones</span>
+      <span class="nb" id="nb-rec">0</span>
+    </button>
+    <div class="nav-section">Gestión</div>
+    <button class="nav-item" onclick="go('flota')" id="nav-flota">
+      <span class="ni">🚘</span><span>Flota</span>
+    </button>
+    <button class="nav-item" onclick="go('historial')" id="nav-historial">
+      <span class="ni">📁</span><span>Historial</span>
+    </button>
+  </nav>
+  <div class="sidebar-foot">
+    <div style="font-weight:600;color:#64748b">Silvia · Thays</div>
+    <div>Taller JM</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="pg-title">Dashboard</div>
+    <div class="topbar-actions" id="pg-actions"></div>
+  </div>
+  <div class="content" id="content"></div>
+</div>
+
+<!-- MODAL -->
+<div class="moverlay" id="moverlay">
+  <div class="modal">
+    <div class="mhdr">
+      <div class="mtitle" id="mtitle">—</div>
+      <button class="btn-gh" onclick="closeModal()">✕</button>
+    </div>
+    <div class="mbody" id="mbody"></div>
+    <div class="mfoot" id="mfoot"></div>
+  </div>
+</div>
+
+<!-- TOASTS -->
+<div class="toasts" id="toasts"></div>
+
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+// ─────────────────────────── DATA ────────────────────────────
+const V_INIT = [
+  {id:'v1',tipo:'JM',      matricula:'1234-ABC',marca:'Seat',       modelo:'Ibiza',   año:2021,gestor:'Silvia',tarifaDia:0},
+  {id:'v2',tipo:'JM',      matricula:'5678-DEF',marca:'Renault',    modelo:'Clio',    año:2020,gestor:'Silvia',tarifaDia:0},
+  {id:'v3',tipo:'JM',      matricula:'9012-GHI',marca:'Peugeot',    modelo:'208',     año:2022,gestor:'Silvia',tarifaDia:0},
+  {id:'v4',tipo:'JM',      matricula:'3456-JKL',marca:'Ford',       modelo:'Fiesta',  año:2021,gestor:'Silvia',tarifaDia:0},
+  {id:'v5',tipo:'JM',      matricula:'7890-MNO',marca:'Opel',       modelo:'Corsa',   año:2022,gestor:'Silvia',tarifaDia:0},
+  {id:'v6',tipo:'Derechocar',matricula:'1111-PQR',marca:'Toyota',   modelo:'Yaris',   año:2022,gestor:'Thays', tarifaDia:45},
+  {id:'v7',tipo:'Derechocar',matricula:'2222-STU',marca:'Volkswagen',modelo:'Polo',   año:2021,gestor:'Thays', tarifaDia:45},
+  {id:'v8',tipo:'Derechocar',matricula:'3333-VWX',marca:'Nissan',   modelo:'Micra',   año:2020,gestor:'Thays', tarifaDia:40},
+  {id:'v9',tipo:'Derechocar',matricula:'4444-YZA',marca:'Honda',    modelo:'Jazz',    año:2022,gestor:'Thays', tarifaDia:45},
+  {id:'v10',tipo:'RM',       matricula:'0000-RM1', marca:'Pendiente', modelo:'Añadir', año:2024,gestor:'—',     tarifaDia:0},
+];
+
+function loadLocalDB(){
+  try{const s=localStorage.getItem('gm_v2');if(s)return JSON.parse(s);}catch(e){}
+  return{vehiculos:V_INIT.map(v=>({...v,estado:'Disponible'})),asignaciones:[],reclamaciones:[]};
+}
+function save(){
+  try{localStorage.setItem('gm_v2',JSON.stringify(db));}catch(e){}
+  _fs.collection('appdata').doc('gm_v2').set(db).catch(e=>console.warn('Firestore save:',e));
+}
+let db=loadLocalDB();
+
+// ─── FIREBASE ─────────────────────────────────────────────────
+firebase.initializeApp({
+  apiKey:'AIzaSyARJPEU_GpmgC_Cxhq11uuov290a77NYNQ',
+  authDomain:'motorcar-jm.firebaseapp.com',
+  projectId:'motorcar-jm',
+  storageBucket:'motorcar-jm.firebasestorage.app',
+  messagingSenderId:'130585462980',
+  appId:'1:130585462980:web:96761e7d87123cc0cc2191'
+});
+const _fs=firebase.firestore();
+
+// ─── CROSS-APP: citas_motorcar ────────────────────────────────
+const _TK='1f40e23c13b68f9ea4d04e03cd60ef2c';
+const _TT='ATTA76af67ad064a04ece125dbe6ed7f2f5fb373a624eacdad26f76aac96f6009accC58A87D2';
+
+// ─── GOOGLE SHEETS BRIDGE ─────────────────────────────────────
+// ⬇ Pega aquí la URL del Apps Script desplegado (motorcar_sheets.gs)
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyEBARWewQWWzrFjjx3pRIlCfBRcVNC54IHtp1Z3VjbXsJdT62QvEa7etK6qMEicECG/exec';
+
+async function sheetsGet(params){
+  if(!SHEETS_URL)return null;
+  try{
+    const url=SHEETS_URL+'?'+new URLSearchParams(params).toString();
+    const r=await fetch(url);
+    return r.ok?r.json():null;
+  }catch(e){console.warn('Sheets GET:',e);return null;}
+}
+async function sheetsPost(data){
+  if(!SHEETS_URL)return null;
+  try{
+    const r=await fetch(SHEETS_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+    return r.ok?r.json():null;
+  }catch(e){console.warn('Sheets POST:',e);return null;}
+}
+// Escribe campos en Expedientes por OR (silencioso si no hay SHEETS_URL)
+async function writeExpediente(or,campos){
+  if(!SHEETS_URL||!or)return;
+  const res=await sheetsPost({action:'updateExpediente',or,campos});
+  if(res?.success)toast('📋 Expediente actualizado en Sheets','ok');
+  else if(res?.error)console.warn('Sheets write:',res.error);
+}
+
+let _citasCache=null;
+function readCitasDB(){return _citasCache;}
+function saveCitasDB(d){
+  _citasCache=d;
+  try{localStorage.setItem('cm_v1',JSON.stringify(d));}catch(e){}
+  _fs.collection('appdata').doc('cm_v1').set(d).catch(e=>console.warn('Firestore citas:',e));
+}
+
+function getCitasTrabajosAbiertos(){
+  const cit=readCitasDB();if(!cit)return[];
+  return cit.trabajos.filter(t=>t.estado!=='listo').map(t=>{
+    const veh=(cit.vehiculos||[]).find(v=>v.id===t.vehiculoId)||{};
+    const cli=(cit.clientes||[]).find(c=>c.id===veh.clienteId)||{};
+    return{...t,_matricula:veh.matricula||'?',_cliente:cli.nombre||'?',_marca:veh.marca||'',_modelo:veh.modelo||''};
+  });
+}
+
+async function trelloUpdateVehiculo(cardId,veh,asig){
+  if(!cardId||!veh)return;
+  try{
+    const r=await fetch(`https://api.trello.com/1/cards/${cardId}?key=${_TK}&token=${_TT}`);
+    if(!r.ok)return;
+    const card=await r.json();
+    const sep='\n\n— VEHÍCULO SUSTITUCIÓN —';
+    const base=(card.desc||'').split(sep)[0];
+    const newDesc=base+sep+`\n🚗 ${veh.matricula} (${veh.marca} ${veh.modelo} · ${veh.año})\nEntrega: ${fd(asig.fechaEntrega)} · Dev. prevista: ${fd(asig.fechaDevolucionPrevista)}\nGestor: ${asig.gestor}`;
+    await fetch(`https://api.trello.com/1/cards/${cardId}?key=${_TK}&token=${_TT}`,{
+      method:'PUT',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({desc:newDesc})
+    });
+    toast('📌 Tarjeta Trello actualizada con vehículo de sustitución','ok');
+  }catch(e){console.warn('Trello update failed',e);}
+}
+
+// ─────────────────────────── UTILS ───────────────────────────
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function hoy(){return new Date().toISOString().slice(0,10)}
+function fd(d){if(!d)return'—';const[y,m,dd]=d.split('-');return`${dd}/${m}/${y}`}
+function ddiff(a,b){return Math.round((new Date(b)-new Date(a))/864e5)}
+function fromToday(d){return ddiff(hoy(),d)}
+function gv(id){return db.vehiculos.find(v=>v.id===id)}
+function ga(id){return db.asignaciones.find(a=>a.id===id)}
+function activeAsig(vid){return db.asignaciones.find(a=>a.vehiculoId===vid&&a.estado==='Activa')}
+
+function toast(msg,type=''){
+  const c=document.getElementById('toasts');
+  const t=document.createElement('div');
+  t.className='toast '+(type==='ok'?'ts':type==='err'?'te':type==='w'?'tw':'');
+  t.textContent=msg;c.appendChild(t);
+  setTimeout(()=>t.remove(),3400);
+}
+
+// ─────────────────────────── NAV ─────────────────────────────
+let curView='dashboard';
+const TITLES={dashboard:'Dashboard',asignaciones:'Asignaciones',devoluciones:'Devoluciones Pendientes',reclamaciones:'Reclamaciones Derechocar',flota:'Gestión de Flota',historial:'Historial Completo'};
+const RENDERS={dashboard:renderDashboard,asignaciones:renderAsignaciones,devoluciones:renderDevoluciones,reclamaciones:renderReclamaciones,flota:renderFlota,historial:renderHistorial};
+
+function go(v){
+  curView=v;
+  document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
+  const el=document.getElementById('nav-'+v);if(el)el.classList.add('active');
+  document.getElementById('pg-title').textContent=TITLES[v]||v;
+  if(RENDERS[v])RENDERS[v]();
+  badges();
+}
+
+function badges(){
+  const act=db.asignaciones.filter(a=>a.estado==='Activa').length;
+  const pend=db.asignaciones.filter(a=>a.estado==='Activa'&&fromToday(a.fechaDevolucionPrevista)<=1).length;
+  const rec=db.reclamaciones.filter(r=>!['Cobrada','Rechazada'].includes(r.estado)).length;
+  const set=(id,n)=>{const el=document.getElementById(id);if(!el)return;el.textContent=n;el.style.display=n>0?'':'none'};
+  set('nb-asig',act);set('nb-dev',pend);set('nb-rec',rec);
+}
+
+// ─────────────────────────── MODAL ───────────────────────────
+function openModal(title,body,foot=''){
+  document.getElementById('mtitle').textContent=title;
+  document.getElementById('mbody').innerHTML=body;
+  document.getElementById('mfoot').innerHTML=foot;
+  document.getElementById('moverlay').classList.add('open');
+}
+function closeModal(){document.getElementById('moverlay').classList.remove('open')}
+document.getElementById('moverlay').addEventListener('click',function(e){if(e.target===this)closeModal()});
+
+// ─────────────────────────── DASHBOARD ───────────────────────
+function getMondayOfWeek(offset=0){
+  const d=new Date();d.setHours(0,0,0,0);
+  const dow=d.getDay()||7;
+  d.setDate(d.getDate()-dow+1+offset*7);
+  return d;
+}
+let weekOffset=0;
+
+function renderDashboard(){
+  const jmAll=db.vehiculos.filter(v=>v.tipo==='JM');
+  const dcAll=db.vehiculos.filter(v=>v.tipo==='Derechocar');
+  const rmAll=db.vehiculos.filter(v=>v.tipo==='RM');
+  const jmD=jmAll.filter(v=>v.estado==='Disponible');
+  const dcD=dcAll.filter(v=>v.estado==='Disponible');
+  const rmD=rmAll.filter(v=>v.estado==='Disponible');
+  const totalDisp=jmD.length+dcD.length+rmD.length;
+  const act=db.asignaciones.filter(a=>a.estado==='Activa').length;
+  const hoyDev=db.asignaciones.filter(a=>a.estado==='Activa'&&a.fechaDevolucionPrevista===hoy()).length;
+  const venc=db.asignaciones.filter(a=>a.estado==='Activa'&&fromToday(a.fechaDevolucionPrevista)<0).length;
+  const rPend=db.reclamaciones.filter(r=>!['Cobrada','Rechazada'].includes(r.estado)).length;
+  const impPend=db.reclamaciones.filter(r=>!['Cobrada','Rechazada'].includes(r.estado)).reduce((s,r)=>s+(r.importeTotal||0),0);
+
+  // Alertas
+  let alerts=[];
+  db.asignaciones.filter(a=>a.estado==='Activa').forEach(a=>{
+    const v=gv(a.vehiculoId),d=fromToday(a.fechaDevolucionPrevista);
+    if(d<0)alerts.push({ico:'🚨',title:`${v?.matricula} — Vencida hace ${Math.abs(d)}d`,sub:`${a.clienteNombre} · ${a.clienteTel}`,aid:a.id});
+    else if(d===0)alerts.push({ico:'⏰',title:`${v?.matricula} — Devolver HOY`,sub:`${a.clienteNombre} · ${a.clienteTel}`,aid:a.id});
+    else if(d===1)alerts.push({ico:'📅',title:`${v?.matricula} — Devolver mañana`,sub:`${a.clienteNombre} · ${a.clienteTel}`,aid:a.id});
+  });
+  db.reclamaciones.forEach(r=>{
+    if(r.estado==='Enviada'&&r.fechaEnvio&&ddiff(r.fechaEnvio,hoy())>=30)
+      alerts.push({ico:'⚠️',title:`${r.aseguradora} — sin respuesta`,sub:`Siniestro ${r.numSiniestro} · ${ddiff(r.fechaEnvio,hoy())}d`});
+  });
+
+  // Vista semanal
+  const mon=getMondayOfWeek(weekOffset);
+  const dias=['LUN','MAR','MIÉ','JUE','VIE'];
+  const fechas=Array.from({length:5},(_,i)=>{const d=new Date(mon);d.setDate(d.getDate()+i);return d.toISOString().slice(0,10);});
+  const meses=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  const semLbl=`${mon.getDate()} ${meses[mon.getMonth()]} — ${new Date(mon.getTime()+4*864e5).getDate()} ${meses[new Date(mon.getTime()+4*864e5).getMonth()]}`;
+
+  const weekGrid=dias.map((dia,i)=>{
+    const fecha=fechas[i];
+    const asigsDia=db.asignaciones.filter(a=>a.estado==='Activa'&&(a.fechaEntrega===fecha||a.fechaDevolucionPrevista===fecha));
+    const chips=asigsDia.map(a=>{
+      const v=gv(a.vehiculoId);
+      const isEntry=a.fechaEntrega===fecha;
+      const tipo=v?.tipo==='JM'?'jm':'dc';
+      const nombre=a.clienteNombre.split(' ')[0]+(a.clienteNombre.split(' ')[1]?' '+a.clienteNombre.split(' ')[1].charAt(0)+'.':'');
+      return`<span class="week-chip ${tipo}" title="${a.clienteNombre} · ${isEntry?'Entrega':'Devolución'}">${nombre}</span>`;
+    }).join('');
+    const isToday=fecha===hoy();
+    return`<div class="week-day" style="${isToday?'border-color:var(--gold)':''}">
+      <div class="week-day-name" style="${isToday?'color:var(--gold)':''}">${dia}${isToday?'<br><span style="color:var(--gold);font-size:8px">HOY</span>':''}</div>
+      ${chips||`<span class="week-chip libre">libre</span>`}
+    </div>`;
+  }).join('');
+
+  // Vehículos disponibles
+  const dispRows=(arr,tipo)=>arr.map(v=>{
+    const lastAsig=[...db.asignaciones].filter(a=>a.vehiculoId===v.id&&a.kmEntrada).sort((a,b)=>new Date(b.fechaDevolucionReal||0)-new Date(a.fechaDevolucionReal||0))[0];
+    return`<div class="veh-row" onclick="vdetail('${v.id}')">
+      <div class="veh-dot ${tipo}"></div>
+      <div class="veh-info">
+        <div class="veh-plate">${v.matricula}</div>
+        <div class="veh-model">${v.marca} ${v.modelo} · ${v.año}</div>
+        ${lastAsig?`<div class="veh-km">km: ${(lastAsig.kmEntrada||0).toLocaleString('es-ES')}</div>`:''}
+      </div>
+      <span class="veh-badge badge-libre">Libre</span>
+    </div>`;
+  }).join('');
+
+  // En uso
+  const enUsoRows=db.asignaciones.filter(a=>a.estado==='Activa').sort((a,b)=>new Date(a.fechaDevolucionPrevista)-new Date(b.fechaDevolucionPrevista)).map(a=>{
+    const v=gv(a.vehiculoId);
+    const d=fromToday(a.fechaDevolucionPrevista);
+    const badgeClass=d<0?'badge-venc':d===0?'badge-hoy':'badge-uso';
+    const badgeTxt=d<0?`Vencida ${Math.abs(d)}d`:d===0?'Devolver hoy':d===1?'Mañana':`En uso · ${d}d`;
+    const tipo=v?.tipo==='JM'?'jm':'dc';
+    return`<div class="veh-row" onclick="showDev('${a.id}')">
+      <div class="veh-dot ${tipo}"></div>
+      <div class="veh-info">
+        <div class="veh-plate" style="font-size:13px">${a.clienteNombre}</div>
+        <div class="veh-model">${v?.matricula||'?'} · en taller · ${d<0?`${Math.abs(d)} días`:fd(a.fechaDevolucionPrevista)}</div>
+      </div>
+      <span class="veh-badge ${badgeClass}">${badgeTxt}</span>
+    </div>`;
+  }).join('');
+
+  // Vinculados con Citas
+  const cit=readCitasDB();
+  const vinc=db.asignaciones.filter(a=>a.estado==='Activa'&&a.citasTrabajoId);
+  const vincRows=cit&&vinc.length?vinc.map(a=>{
+    const v=gv(a.vehiculoId),t=cit.trabajos?.find(x=>x.id===a.citasTrabajoId)||{};
+    const cv=(cit.vehiculos||[]).find(x=>x.id===t.vehiculoId)||{};
+    return`<div class="veh-row" style="border-color:rgba(52,152,219,.3)">
+      <div style="font-size:14px">🔗</div>
+      <div class="veh-info">
+        <div class="veh-plate" style="font-size:12px">${v?.matricula||'?'} → ${cv.matricula||'?'} ${cv.marca||''}</div>
+        <div class="veh-model">${a.clienteNombre} · OR: ${t.or||'—'}</div>
+      </div>
+      <span class="veh-badge" style="background:rgba(52,152,219,.15);color:var(--blue)">Dev. ${fd(a.fechaDevolucionPrevista)}</span>
+    </div>`;
+  }).join(''):'';
+
+  document.getElementById('pg-actions').innerHTML=`<button class="btn btn-p" onclick="showNuevaAsig()">+ Nueva Asignación</button>`;
+  document.getElementById('content').innerHTML=`
+
+    <div class="stat-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:10px">
+      <div class="stat-chip white" onclick="go('asignaciones')" style="border-color:rgba(255,255,255,.12)">
+        <div class="stat-num">${totalDisp}</div>
+        <div class="stat-lbl">Libres Totales</div>
+      </div>
+      <div class="stat-chip ${act>0?'gold':''}" onclick="go('asignaciones')">
+        <div class="stat-num">${act}</div>
+        <div class="stat-lbl">En Uso</div>
+      </div>
+      <div class="stat-chip ${venc>0?'red':hoyDev>0?'dc':''}" onclick="go('devoluciones')">
+        <div class="stat-num">${hoyDev+venc}</div>
+        <div class="stat-lbl">${venc>0?`${venc} Vencida${venc!==1?'s':''}`:hoyDev>0?'Devolver Hoy':'Devoluciones'}</div>
+      </div>
+    </div>
+    <div class="stat-row" style="grid-template-columns:repeat(3,1fr)">
+      <div class="stat-chip jm" onclick="go('asignaciones')">
+        <div class="stat-num">${jmD.length}<span style="font-size:14px;font-weight:400;opacity:.5">/${jmAll.length}</span></div>
+        <div class="stat-lbl">Libres JM</div>
+      </div>
+      <div class="stat-chip dc" onclick="go('asignaciones')">
+        <div class="stat-num">${dcD.length}<span style="font-size:14px;font-weight:400;opacity:.5">/${dcAll.length}</span></div>
+        <div class="stat-lbl">Libres Derechocar</div>
+      </div>
+      <div class="stat-chip rm" onclick="go('asignaciones')">
+        <div class="stat-num">${rmD.length}<span style="font-size:14px;font-weight:400;opacity:.5">/${rmAll.length}</span></div>
+        <div class="stat-lbl">Libres RM</div>
+      </div>
+    </div>
+
+    <div class="week-panel">
+      <div class="week-hdr">
+        <div class="week-title">Vista Semanal</div>
+        <div class="week-nav">
+          <button onclick="weekOffset--;renderDashboard()">◀</button>
+          <div class="week-lbl">${semLbl}</div>
+          <button onclick="weekOffset++;renderDashboard()">▶</button>
+        </div>
+      </div>
+      <div class="week-grid">${weekGrid}</div>
+    </div>
+
+    <div class="section-panel">
+      <div class="section-lbl">Vehículos Disponibles</div>
+      ${jmD.length>0?`<div class="sub-lbl"><span class="dot" style="background:var(--jm)"></span>JM — Silvia (${jmD.length}/${jmAll.length})</div>${dispRows(jmD,'jm')}`:''}
+      ${jmD.length>0&&dcD.length>0?'<div style="height:10px"></div>':''}
+      ${dcD.length>0?`<div class="sub-lbl"><span class="dot" style="background:var(--dc)"></span>Derechocar — Thays (${dcD.length}/${dcAll.length})</div>${dispRows(dcD,'dc')}`:''}
+      ${(jmD.length>0||dcD.length>0)&&rmD.length>0?'<div style="height:10px"></div>':''}
+      ${rmD.length>0?`<div class="sub-lbl"><span class="dot" style="background:var(--rm)"></span>RM (${rmD.length}/${rmAll.length})</div>${dispRows(rmD,'rm')}`:''}
+      ${jmD.length===0&&dcD.length===0&&rmD.length===0?`<div style="text-align:center;padding:16px;color:var(--text3);font-size:12px">Sin vehículos disponibles</div>`:''}
+    </div>
+
+    ${act>0?`<div class="section-panel">
+      <div class="section-lbl">En Uso (${act})</div>
+      ${enUsoRows}
+    </div>`:''}
+
+    ${vincRows?`<div class="section-panel">
+      <div class="section-lbl">🔗 Vinculados con Citas</div>
+      ${vincRows}
+    </div>`:''}
+
+    ${rPend>0||impPend>0?`<div class="section-panel">
+      <div class="section-lbl">💼 Reclamaciones Derechocar</div>
+      <div style="display:flex;gap:20px">
+        <div><div style="font-size:24px;font-weight:800;color:var(--dc)">${rPend}</div><div style="font-size:10px;color:var(--text3);text-transform:uppercase">Abiertas</div></div>
+        <div><div style="font-size:24px;font-weight:800;color:var(--gold)">${impPend.toLocaleString('es-ES')}€</div><div style="font-size:10px;color:var(--text3);text-transform:uppercase">Pendiente cobro</div></div>
+      </div>
+    </div>`:''}
+
+    ${alerts.length>0?`<div class="section-panel" style="border-color:rgba(231,76,60,.3)">
+      <div class="section-lbl" style="color:var(--red)">🔔 Alertas (${alerts.length})</div>
+      ${alerts.map(a=>`<div class="veh-row" style="margin-bottom:6px">
+        <div class="aico">${a.ico}</div>
+        <div class="veh-info"><div class="veh-plate" style="font-size:12px">${a.title}</div><div class="veh-model">${a.sub}</div></div>
+        ${a.aid?`<button class="btn btn-g btn-sm" onclick="showDev('${a.aid}')">Devolver</button>`:''}
+      </div>`).join('')}
+    </div>`:''}
+
+    <div class="gestores-bar">GESTIONA: <span>SILVIA</span> (JM) · <span>THAYS</span> (DERECHOCAR)</div>
+  `;
+}
+
+function vcards(tipo){
+  return db.vehiculos.filter(v=>v.tipo===tipo).map(v=>{
+    const a=activeAsig(v.id),d=a?fromToday(a.fechaDevolucionPrevista):null,ov=d!==null&&d<0;
+    return`<div class="vcard ${tipo==='JM'?'jm':'dc'}${v.estado!=='Disponible'?' assigned':''}" onclick="vdetail('${v.id}')">
+      <div class="vtbadge ${tipo==='JM'?'jm':'dc'}">${tipo}</div>
+      <div class="vplate">${v.matricula}</div>
+      <div class="vmodel">${v.marca} ${v.modelo} · ${v.año}</div>
+      <div class="vstatus"><span class="sdot ${v.estado.toLowerCase()}"></span><span>${v.estado}</span></div>
+      ${a?`<div class="vclient">👤 ${a.clienteNombre}</div>
+      <div class="vdue${ov?' ov':''}">${ov?`⚠️ Vencido ${Math.abs(d)}d`:`📅 Dev. ${fd(a.fechaDevolucionPrevista)}`}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+function vdetail(vid){
+  const v=gv(vid),a=activeAsig(vid);
+  if(!v)return;
+  if(v.estado==='Disponible'){if(confirm(`¿Nueva asignación para ${v.matricula}?`))showNuevaAsig(vid);return;}
+  if(!a)return;
+  const d=fromToday(a.fechaDevolucionPrevista);
+  openModal(`${v.matricula} — Asignación activa`,`
+    <div class="irow">
+      <div class="iitem"><div class="ilbl">Vehículo</div><div class="ival">${v.marca} ${v.modelo}</div></div>
+      <div class="iitem"><div class="ilbl">Cliente</div><div class="ival">${a.clienteNombre}</div></div>
+      <div class="iitem"><div class="ilbl">Teléfono</div><div class="ival"><a href="tel:${a.clienteTel}">${a.clienteTel}</a></div></div>
+      <div class="iitem"><div class="ilbl">DNI</div><div class="ival">${a.clienteDni}</div></div>
+      <div class="iitem"><div class="ilbl">OR</div><div class="ival">${a.orVinculada||'—'}</div></div>
+      <div class="iitem"><div class="ilbl">Entregado</div><div class="ival">${fd(a.fechaEntrega)}</div></div>
+      <div class="iitem"><div class="ilbl">Dev. prevista</div><div class="ival" style="${d<0?'color:#ef4444':''}">${fd(a.fechaDevolucionPrevista)}${d<0?' ⚠️':d===0?' (hoy)':''}</div></div>
+      ${a.numSiniestro?`<div class="iitem"><div class="ilbl">Siniestro</div><div class="ival">${a.numSiniestro}</div></div>`:''}
+      ${a.aseguradora?`<div class="iitem"><div class="ilbl">Aseguradora</div><div class="ival">${a.aseguradora}</div></div>`:''}
+      ${(()=>{if(!a.citasTrabajoId)return'';const cit=readCitasDB();const t=cit?.trabajos?.find(x=>x.id===a.citasTrabajoId);if(!t)return'';const cv=(cit.vehiculos||[]).find(v=>v.id===t.vehiculoId)||{};return`<div class="iitem" style="grid-column:1/-1"><div class="ilbl">🔗 Trabajo en Citas</div><div class="ival" style="color:#2563eb">${cv.matricula||'?'} — ${t.tipo||'—'} · OR: ${t.or||'—'}</div></div>`;})()}
+    </div>
+    ${SHEETS_URL&&(a.orVinculada||a.numSiniestro)?`<div id="exp-panel" style="margin-top:12px">
+      <button class="btn-gh btn-sm" onclick="loadExpPanel('${a.orVinculada||a.numSiniestro||''}')">📋 Ver Expediente en Sheets</button>
+      <button class="btn-gh btn-sm" onclick="loadRecambiosPanel('${a.orVinculada||''}','${a.clienteNombre||''}')" style="margin-left:6px">🔩 Recambios</button>
+      <div id="exp-data" style="margin-top:10px"></div>
+    </div>`:''}`,`
+    <button class="btn btn-s" onclick="closeModal()">Cerrar</button>
+    <button class="btn-gh btn-sm" onclick="closeModal();genContrato('${a.id}')">📄 Contrato</button>
+    <button class="btn btn-g btn-sm" onclick="closeModal();showDev('${a.id}')">✅ Registrar Devolución</button>
+  `);
+}
+
+// ──────────────────── NUEVA ASIGNACIÓN ───────────────────────
+function showNuevaAsig(vidPre=null){
+  const tipo=vidPre?gv(vidPre)?.tipo:null;
+  const jmD=db.vehiculos.filter(v=>v.tipo==='JM'&&v.estado==='Disponible');
+  const dcD=db.vehiculos.filter(v=>v.tipo==='Derechocar'&&v.estado==='Disponible');
+  const rmD=db.vehiculos.filter(v=>v.tipo==='RM'&&v.estado==='Disponible');
+  const opts=(arr,pre)=>arr.length?arr.map(v=>`<option value="${v.id}"${pre===v.id?' selected':''}>${v.matricula} — ${v.marca} ${v.modelo}</option>`).join(''):`<option value="">Sin disponibles</option>`;
+
+  const citasT=getCitasTrabajosAbiertos();
+  const citasOpts=citasT.map(t=>`<option value="${t.id}" data-mat="${t._matricula}" data-cli="${t._cliente}" data-or="${t.or||''}">${t._matricula} · ${t._cliente} · ${t.or||'Sin OR'} (${t.tipo||'—'})</option>`).join('');
+
+  openModal('Nueva Asignación',`
+    <div style="background:rgba(39,174,96,.08);border:1px solid rgba(39,174,96,.25);border-radius:10px;padding:12px 14px;margin-bottom:14px">
+      <div style="font-size:12px;font-weight:700;color:var(--jm);margin-bottom:8px">📋 Buscar en Expedientes <span style="font-weight:400;color:var(--text3)">(introduce OR o matrícula del cliente)</span></div>
+      <div style="display:flex;gap:8px">
+        <input type="text" id="exp-q" placeholder="OR758 ó 8798HVZ" style="flex:1;padding:7px 10px;border:1px solid var(--border2);border-radius:7px;font-size:13px;background:var(--card2);color:var(--text)" onkeydown="if(event.key==='Enter')onExpSearch()">
+        <button class="btn btn-g btn-sm" onclick="onExpSearch()">🔍 Buscar</button>
+      </div>
+      <div id="exp-result" style="display:none;margin-top:9px;font-size:12px;padding:8px 10px;border-radius:7px;background:var(--card2);border:1px solid var(--border2)"></div>
+    </div>
+    ${citasT.length>0?`<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:12px 14px;margin-bottom:16px">
+      <div style="font-size:12px;font-weight:700;color:#1e40af;margin-bottom:7px">🔗 Vincular con trabajo de Citas Motorcar <span style="font-weight:400;color:#64748b">(opcional)</span></div>
+      <select id="citas-sel" style="width:100%;padding:7px 10px;border:1px solid #bfdbfe;border-radius:7px;font-size:12px;background:#fff" onchange="onCitasSel(this)">
+        <option value="">— Sin vincular —</option>
+        ${citasOpts}
+      </select>
+      <div id="citas-info" style="display:none;margin-top:8px;font-size:11px;color:#1e40af;background:#dbeafe;padding:6px 10px;border-radius:6px"></div>
+    </div>`:''}
+    <div class="typsel" style="grid-template-columns:1fr 1fr 1fr">
+      <div class="typo${tipo==='JM'?' sel-jm':''}" onclick="selTipo('JM')">
+        <div class="tyi">🟢</div><div class="tyn">JM</div>
+        <div class="tys">Gratuito · Silvia · ${jmD.length} libres</div>
+      </div>
+      <div class="typo${tipo==='Derechocar'?' sel-dc':''}" onclick="selTipo('Derechocar')">
+        <div class="tyi">🟡</div><div class="tyn">Derechocar</div>
+        <div class="tys">Aseguradora · Thays · ${dcD.length} libres</div>
+      </div>
+      <div class="typo${tipo==='RM'?' sel-rm':''}" onclick="selTipo('RM')" style="border-color:${tipo==='RM'?'var(--rm)':'var(--border)'}">
+        <div class="tyi">🟣</div><div class="tyn">RM</div>
+        <div class="tys">${rmD.length} libres</div>
+      </div>
+    </div>
+
+    <div id="f-jm" style="${tipo==='Derechocar'?'display:none':''}">
+      ${jmD.length===0?`<div class="empty"><div class="ei">🚫</div><div class="et">Sin vehículos JM disponibles</div></div>`:`
+      <div class="fgrid">
+        <div class="fg"><label>Vehículo *</label><select id="jv">${opts(jmD,vidPre)}</select></div>
+        <div class="fg"><label>OR Vinculada</label><input type="text" id="jor" placeholder="OR-2026-000"></div>
+        <div class="fg"><label>Nombre cliente *</label><input type="text" id="jnom" placeholder="Nombre completo"></div>
+        <div class="fg"><label>DNI / NIE *</label><input type="text" id="jdni" placeholder="12345678A"></div>
+        <div class="fg"><label>Teléfono *</label><input type="tel" id="jtel" placeholder="600 000 000"></div>
+        <div class="fg"><label>Email</label><input type="email" id="jemail" placeholder="cliente@email.com"></div>
+        <div class="fg"><label>Fecha Entrega *</label><input type="date" id="jfe" value="${hoy()}"></div>
+        <div class="fg"><label>Devolución Prevista *</label><input type="date" id="jfd"></div>
+        <div class="fg"><label>KM Salida</label><input type="number" id="jkm" placeholder="00000"></div>
+        <div class="fg full"><label>Notas</label><textarea id="jnot" placeholder="Observaciones..."></textarea></div>
+      </div>`}
+    </div>
+
+    <div id="f-dc" style="${tipo==='Derechocar'?'':'display:none'}">
+      ${dcD.length===0?`<div class="empty"><div class="ei">🚫</div><div class="et">Sin vehículos Derechocar disponibles</div></div>`:`
+      <div class="fgrid">
+        <div class="fg"><label>Vehículo *</label><select id="dv">${opts(dcD,vidPre)}</select></div>
+        <div class="fg"><label>Nº Siniestro *</label><input type="text" id="dsin" placeholder="Número siniestro"></div>
+        <div class="fg"><label>Aseguradora *</label><input type="text" id="daseg" placeholder="Compañía responsable"></div>
+        <div class="fg"><label>Gestor aseguradora</label><input type="text" id="dgest" placeholder="Nombre gestor/perito"></div>
+        <div class="fg"><label>Nombre cliente *</label><input type="text" id="dnom" placeholder="Nombre completo"></div>
+        <div class="fg"><label>DNI / NIE *</label><input type="text" id="ddni" placeholder="12345678A"></div>
+        <div class="fg"><label>Teléfono *</label><input type="tel" id="dtel" placeholder="600 000 000"></div>
+        <div class="fg"><label>Email</label><input type="email" id="demail" placeholder="cliente@email.com"></div>
+        <div class="fg"><label>Fecha Entrega *</label><input type="date" id="dfe" value="${hoy()}"></div>
+        <div class="fg"><label>Devolución Prevista *</label><input type="date" id="dfd"></div>
+        <div class="fg"><label>KM Salida</label><input type="number" id="dkm" placeholder="00000"></div>
+        <div class="fg"><label>OR Taller</label><input type="text" id="dor" placeholder="OR-2026-000"></div>
+        <div class="fg full"><label>Notas</label><textarea id="dnot" placeholder="Observaciones..."></textarea></div>
+      </div>`}
+    </div>
+
+    <div id="f-rm" style="display:none">
+      ${rmD.length===0?`<div class="empty"><div class="ei">🚫</div><div class="et">Sin vehículos RM disponibles</div></div>`:`
+      <div class="fgrid">
+        <div class="fg"><label>Vehículo *</label><select id="rmv">${opts(rmD,vidPre)}</select></div>
+        <div class="fg"><label>OR Vinculada</label><input type="text" id="rmor" placeholder="OR-2026-000"></div>
+        <div class="fg"><label>Nombre cliente *</label><input type="text" id="rmnom" placeholder="Nombre completo"></div>
+        <div class="fg"><label>DNI / NIE *</label><input type="text" id="rmdni" placeholder="12345678A"></div>
+        <div class="fg"><label>Teléfono *</label><input type="tel" id="rmtel" placeholder="600 000 000"></div>
+        <div class="fg"><label>Email</label><input type="email" id="rmemail" placeholder="cliente@email.com"></div>
+        <div class="fg"><label>Fecha Entrega *</label><input type="date" id="rmfe" value="${hoy()}"></div>
+        <div class="fg"><label>Devolución Prevista *</label><input type="date" id="rmfd"></div>
+        <div class="fg"><label>KM Salida</label><input type="number" id="rmkm" placeholder="00000"></div>
+        <div class="fg full"><label>Notas</label><textarea id="rmnot" placeholder="Observaciones..."></textarea></div>
+      </div>`}
+    </div>
+  `,`<button class="btn btn-s" onclick="closeModal()">Cancelar</button>
+     <button class="btn btn-p" onclick="submitAsig()">✅ Confirmar Asignación</button>`);
+
+  if(!tipo)selTipo('JM');
+}
+
+function onCitasSel(sel){
+  const opt=sel.options[sel.selectedIndex];
+  const info=document.getElementById('citas-info');
+  if(!sel.value){info.style.display='none';return;}
+  const mat=opt.dataset.mat,cli=opt.dataset.cli,or=opt.dataset.or;
+  info.style.display='';
+  info.textContent=`🚗 ${mat} · 👤 ${cli}${or?' · OR: '+or:''}`;
+  // Auto-rellena OR en el formulario activo
+  const jor=document.getElementById('jor');const dor=document.getElementById('dor');
+  if(jor&&or)jor.value=or;if(dor&&or)dor.value=or;
+}
+
+function selTipo(t){
+  document.querySelectorAll('.typo').forEach(el=>{el.className='typo';el.style.borderColor='';});
+  const map={JM:'sel-jm',Derechocar:'sel-dc',RM:'sel-rm'};
+  const idx={JM:0,Derechocar:1,RM:2}[t]||0;
+  const els=document.querySelectorAll('.typo');
+  if(els[idx]){els[idx].className=`typo ${map[t]}`;if(t==='RM')els[idx].style.borderColor='var(--rm)';}
+  document.getElementById('f-jm').style.display=t==='JM'?'':'none';
+  document.getElementById('f-dc').style.display=t==='Derechocar'?'':'none';
+  document.getElementById('f-rm').style.display=t==='RM'?'':'none';
+}
+
+function curTipo(){
+  const sel=document.querySelector('.typo.sel-jm,.typo.sel-dc,.typo.sel-rm');
+  if(!sel)return null;
+  if(sel.classList.contains('sel-jm'))return'JM';
+  if(sel.classList.contains('sel-dc'))return'Derechocar';
+  return'RM';
+}
+
+function v(id){return document.getElementById(id)?.value?.trim()||''}
+
+function submitAsig(){
+  const tipo=curTipo();
+  if(!tipo){toast('Selecciona tipo de vehículo','err');return;}
+  if(tipo==='JM'){
+    const [vid,nom,dni,tel,fe,fd]=[ v('jv'),v('jnom'),v('jdni'),v('jtel'),v('jfe'),v('jfd') ];
+    if(!vid||!nom||!dni||!tel||!fe||!fd){toast('Completa los campos obligatorios (*)','err');return;}
+    const citasId=(document.getElementById('citas-sel')?.value||'');
+    const a={id:uid(),vehiculoId:vid,tipo:'JM',gestor:'Silvia',fechaSolicitud:hoy(),
+      fechaEntrega:fe,fechaDevolucionPrevista:fd,fechaDevolucionReal:null,
+      clienteNombre:nom,clienteDni:dni,clienteTel:tel,clienteEmail:v('jemail'),
+      orVinculada:v('jor'),kmSalida:parseInt(v('jkm'))||0,kmEntrada:null,
+      estado:'Activa',notas:v('jnot'),citasTrabajoId:citasId||null};
+    db.asignaciones.push(a);
+    const veh=gv(vid);if(veh)veh.estado='Asignado';
+    save();closeModal();toast(`✅ ${veh?.matricula} asignado a ${nom}`,'ok');
+    if(citasId){const cit=readCitasDB();const t=cit?.trabajos?.find(x=>x.id===citasId);if(t?.trelloCardId)trelloUpdateVehiculo(t.trelloCardId,veh,a);}
+    go(curView);
+  } else if(tipo==='Derechocar'){
+    const [vid,sin,aseg,nom,dni,tel,fe,fd]=[ v('dv'),v('dsin'),v('daseg'),v('dnom'),v('ddni'),v('dtel'),v('dfe'),v('dfd') ];
+    if(!vid||!sin||!aseg||!nom||!dni||!tel||!fe||!fd){toast('Completa los campos obligatorios (*)','err');return;}
+    const a={id:uid(),vehiculoId:vid,tipo:'Derechocar',gestor:'Thays',fechaSolicitud:hoy(),
+      fechaEntrega:fe,fechaDevolucionPrevista:fd,fechaDevolucionReal:null,
+      clienteNombre:nom,clienteDni:dni,clienteTel:tel,clienteEmail:v('demail'),
+      orVinculada:v('dor'),numSiniestro:sin,aseguradora:aseg,gestorAseguradora:v('dgest'),
+      kmSalida:parseInt(v('dkm'))||0,kmEntrada:null,estado:'Activa',notas:v('dnot')};
+    const veh=gv(vid);
+    const r={id:uid(),asignacionId:a.id,aseguradora:aseg,numSiniestro:sin,
+      fechaApertura:hoy(),tarifaDia:veh?.tarifaDia||45,importeDias:null,importeTotal:0,
+      estado:'Abierta',fechaEnvio:null,fechaCobro:null,importeCobrado:null,notas:''};
+    const citasId=(document.getElementById('citas-sel')?.value||'');
+    a.citasTrabajoId=citasId||null;
+    db.asignaciones.push(a);db.reclamaciones.push(r);
+    if(veh)veh.estado='Asignado';
+    save();closeModal();toast(`✅ ${veh?.matricula} asignado · Reclamación creada`,'ok');
+    if(citasId){const cit=readCitasDB();const t=cit?.trabajos?.find(x=>x.id===citasId);if(t?.trelloCardId)trelloUpdateVehiculo(t.trelloCardId,veh,a);}
+    go(curView);
+  } else if(tipo==='RM'){
+    const [vid,nom,dni,tel,fe,fd2]=[v('rmv'),v('rmnom'),v('rmdni'),v('rmtel'),v('rmfe'),v('rmfd')];
+    if(!vid||!nom||!dni||!tel||!fe||!fd2){toast('Completa los campos obligatorios (*)','err');return;}
+    const citasId=(document.getElementById('citas-sel')?.value||'');
+    const a={id:uid(),vehiculoId:vid,tipo:'RM',gestor:'—',fechaSolicitud:hoy(),
+      fechaEntrega:fe,fechaDevolucionPrevista:fd2,fechaDevolucionReal:null,
+      clienteNombre:nom,clienteDni:dni,clienteTel:tel,clienteEmail:v('rmemail'),
+      orVinculada:v('rmor'),kmSalida:parseInt(v('rmkm'))||0,kmEntrada:null,
+      estado:'Activa',notas:v('rmnot'),citasTrabajoId:citasId||null};
+    db.asignaciones.push(a);
+    const veh=gv(vid);if(veh)veh.estado='Asignado';
+    save();closeModal();toast(`✅ ${veh?.matricula} (RM) asignado a ${nom}`,'ok');
+    if(citasId){const cit=readCitasDB();const t=cit?.trabajos?.find(x=>x.id===citasId);if(t?.trelloCardId)trelloUpdateVehiculo(t.trelloCardId,veh,a);}
+    go(curView);
+  }
+}
+
+// ──────────────────── ASIGNACIONES ───────────────────────────
+function renderAsignaciones(){
+  document.getElementById('pg-actions').innerHTML=`<button class="btn btn-p" onclick="showNuevaAsig()">+ Nueva Asignación</button>`;
+  const act=db.asignaciones.filter(a=>a.estado==='Activa');
+  const cer=db.asignaciones.filter(a=>a.estado!=='Activa');
+  document.getElementById('content').innerHTML=`
+    <div class="tabs">
+      <button class="tbbtn active" onclick="swTab('ta',this)">Activas (${act.length})</button>
+      <button class="tbbtn" onclick="swTab('tc',this)">Cerradas (${cer.length})</button>
+    </div>
+    <div id="ta" class="tbpanel active">${act.length===0?emptyS('📋','Sin asignaciones activas'):`<div class="tbox">${atable(act,true)}</div>`}</div>
+    <div id="tc" class="tbpanel">${cer.length===0?emptyS('📁','Sin historial'):`<div class="tbox">${atable(cer,false)}</div>`}</div>
+  `;
+}
+
+function firmaTag(a){
+  if(!a.metodoFirma)return`<span style="font-size:10px;color:#94a3b8">Sin firmar</span>`;
+  if(a.metodoFirma==='fisica')return`<span style="font-size:10px;color:#059669;font-weight:600">🖨️ Física</span>`;
+  return`<span style="font-size:10px;color:#2563eb;font-weight:600">📱 Online</span>`;
+}
+
+function atable(items,act){
+  return`<table><thead><tr>
+    <th>Vehículo</th><th>Tipo</th><th>Cliente</th><th>Entrega</th><th>Dev. Prevista</th>
+    ${act?'<th>Firma</th><th>Acciones</th>':'<th>Dev. Real</th><th>Firma</th>'}
+  </tr></thead><tbody>
+  ${items.map(a=>{
+    const veh=gv(a.vehiculoId),d=act?fromToday(a.fechaDevolucionPrevista):null,ov=d!==null&&d<0;
+    return`<tr>
+      <td><strong>${veh?.matricula||'?'}</strong><br><small style="color:#94a3b8">${veh?.marca} ${veh?.modelo}</small></td>
+      <td><span class="bdg ${a.tipo==='JM'?'bg':'ba'}">${a.tipo}</span></td>
+      <td>${a.clienteNombre}<br><small style="color:#94a3b8">${a.clienteTel}</small></td>
+      <td>${fd(a.fechaEntrega)}</td>
+      <td style="${ov?'color:#ef4444;font-weight:700':''}">${fd(a.fechaDevolucionPrevista)}${ov?' ⚠️':d===0?' (hoy)':''}</td>
+      ${act?`<td>${firmaTag(a)}</td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-g btn-sm" onclick="showDev('${a.id}')">Devolver</button>
+        <button class="btn-gh btn-sm" onclick="genContrato('${a.id}')" title="Contrato y firma">📄</button>
+      </td>`:`<td>${fd(a.fechaDevolucionReal)}</td><td>${firmaTag(a)}</td>`}
+    </tr>`;
+  }).join('')}
+  </tbody></table>`;
+}
+
+function swTab(id,btn){
+  document.querySelectorAll('.tbpanel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tbbtn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');btn.classList.add('active');
+}
+
+// ──────────────────── DEVOLUCIONES ───────────────────────────
+function renderDevoluciones(){
+  document.getElementById('pg-actions').innerHTML='';
+  const pend=db.asignaciones.filter(a=>a.estado==='Activa').sort((a,b)=>new Date(a.fechaDevolucionPrevista)-new Date(b.fechaDevolucionPrevista));
+  document.getElementById('content').innerHTML=pend.length===0
+    ?emptyS('✅','Sin devoluciones pendientes','Todos los vehículos devueltos')
+    :`<div class="tbox"><table><thead><tr>
+        <th>Vehículo</th><th>Tipo</th><th>Cliente</th><th>Teléfono</th><th>Dev. Prevista</th><th>Estado</th><th>Acción</th>
+      </tr></thead><tbody>
+      ${pend.map(a=>{
+        const veh=gv(a.vehiculoId),d=fromToday(a.fechaDevolucionPrevista),ov=d<0,td=d===0;
+        return`<tr>
+          <td><strong>${veh?.matricula}</strong><br><small style="color:#94a3b8">${veh?.marca} ${veh?.modelo}</small></td>
+          <td><span class="bdg ${a.tipo==='JM'?'bg':'ba'}">${a.tipo}</span></td>
+          <td>${a.clienteNombre}</td>
+          <td><a href="tel:${a.clienteTel}">${a.clienteTel}</a></td>
+          <td style="${ov?'color:#ef4444;font-weight:700':td?'color:#d97706;font-weight:600':''}">${fd(a.fechaDevolucionPrevista)}${ov?`<br><small>Vencida ${Math.abs(d)}d</small>`:td?'<br><small>(hoy)</small>':d===1?'<br><small>(mañana)</small>':''}</td>
+          <td><span class="bdg ${ov?'br':td?'ba':'bb'}">${ov?'Vencida':td?'Hoy':`En ${d}d`}</span></td>
+          <td><button class="btn btn-g btn-sm" onclick="showDev('${a.id}')">✅ Registrar</button></td>
+        </tr>`;
+      }).join('')}
+      </tbody></table></div>`;
+}
+
+function showDev(aid){
+  const a=ga(aid),veh=a?gv(a.vehiculoId):null;
+  if(!a||!veh)return;
+  openModal(`Devolución — ${veh.matricula}`,`
+    <div class="hbox${a.tipo==='Derechocar'?' dc':''}">
+      <strong>${a.clienteNombre}</strong> — ${veh.marca} ${veh.modelo}<br>
+      <small style="color:#64748b">Entregado ${fd(a.fechaEntrega)} · Previsto ${fd(a.fechaDevolucionPrevista)}</small>
+    </div>
+    <div class="fgrid">
+      <div class="fg"><label>Fecha Devolución Real *</label><input type="date" id="dv-fecha" value="${hoy()}"></div>
+      <div class="fg"><label>KM Entrada</label><input type="number" id="dv-km" placeholder="${a.kmSalida||0}"></div>
+      <div class="fg"><label>Estado del Vehículo</label>
+        <select id="dv-est"><option value="Disponible">✅ Correcto — Disponible</option><option value="Taller">🔧 A taller — Revisión</option></select>
+      </div>
+      ${a.tipo==='Derechocar'?`<div class="fg"><label>Tarifa/día (€)</label><input type="number" id="dv-tarifa" value="${veh.tarifaDia||45}"></div>`:''}
+      <div class="fg full"><label>Notas devolución</label><textarea id="dv-notas" placeholder="Estado, incidencias..."></textarea></div>
+    </div>
+    ${a.tipo==='Derechocar'?`<div id="imp-prev" style="background:#fffbeb;border-radius:10px;padding:12px;margin-top:4px;display:none">
+      <strong>💶 Importe a reclamar: <span id="imp-val">—</span></strong>
+    </div>`:''}
+  `,`<button class="btn btn-s" onclick="closeModal()">Cancelar</button>
+     <button class="btn btn-g" onclick="submitDev('${aid}')">✅ Confirmar Devolución</button>`);
+
+  if(a.tipo==='Derechocar'){
+    const calc=()=>{
+      const f=document.getElementById('dv-fecha')?.value;
+      const t=parseFloat(document.getElementById('dv-tarifa')?.value)||0;
+      if(f&&a.fechaEntrega){
+        const dias=Math.max(1,ddiff(a.fechaEntrega,f));
+        document.getElementById('imp-val').textContent=`${dias} días × ${t}€ = ${(dias*t).toLocaleString('es-ES')}€`;
+        document.getElementById('imp-prev').style.display='';
+      }
+    };
+    setTimeout(()=>{
+      document.getElementById('dv-fecha')?.addEventListener('change',calc);
+      document.getElementById('dv-tarifa')?.addEventListener('input',calc);
+      calc();
+    },60);
+  }
+}
+
+function submitDev(aid){
+  const a=ga(aid),veh=a?gv(a.vehiculoId):null;
+  if(!a||!veh)return;
+  const fecha=document.getElementById('dv-fecha')?.value;
+  if(!fecha){toast('Indica la fecha de devolución','err');return;}
+  a.fechaDevolucionReal=fecha;
+  a.kmEntrada=parseInt(document.getElementById('dv-km')?.value)||a.kmSalida;
+  a.notasDevolucion=document.getElementById('dv-notas')?.value||'';
+  a.estado='Devuelta';
+  veh.estado=document.getElementById('dv-est')?.value||'Disponible';
+  if(a.tipo==='Derechocar'){
+    const tar=parseFloat(document.getElementById('dv-tarifa')?.value)||veh.tarifaDia||45;
+    const dias=Math.max(1,ddiff(a.fechaEntrega,fecha));
+    const rec=db.reclamaciones.find(r=>r.asignacionId===aid);
+    if(rec){rec.importeDias=dias;rec.tarifaDia=tar;rec.importeTotal=dias*tar;}
+    veh.tarifaDia=tar;
+  }
+  save();closeModal();toast(`✅ Devolución de ${veh.matricula} registrada`,'ok');go(curView);
+  // ── Write-back a Expedientes ──
+  if(a.orVinculada){
+    writeExpediente(a.orVinculada,{
+      'FECHA_ENTREGA_REAL': fecha
+    });
+  }
+}
+
+// ──────────────────── RECLAMACIONES ──────────────────────────
+function renderReclamaciones(){
+  document.getElementById('pg-actions').innerHTML='';
+  if(db.reclamaciones.length===0){
+    document.getElementById('content').innerHTML=emptyS('💼','Sin reclamaciones','Se crean automáticamente al asignar un vehículo Derechocar');return;
+  }
+  const totRec=db.reclamaciones.reduce((s,r)=>s+(r.importeTotal||0),0);
+  const totCob=db.reclamaciones.filter(r=>r.estado==='Cobrada').reduce((s,r)=>s+(r.importeCobrado||0),0);
+  const pend=db.reclamaciones.filter(r=>!['Cobrada','Rechazada'].includes(r.estado)).length;
+  document.getElementById('content').innerHTML=`
+    <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:18px">
+      <div class="stat"><div class="stat-lbl">Total Reclamado</div><div class="stat-val">${totRec.toLocaleString('es-ES')}€</div></div>
+      <div class="stat g"><div class="stat-lbl">Total Cobrado</div><div class="stat-val">${totCob.toLocaleString('es-ES')}€</div></div>
+      <div class="stat ${pend>0?'w':''}"><div class="stat-lbl">Pendientes</div><div class="stat-val">${pend}</div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      ${db.reclamaciones.slice().reverse().map(r=>{
+        const a=ga(r.asignacionId),veh=a?gv(a.vehiculoId):null;
+        const dsr=r.fechaEnvio?ddiff(r.fechaEnvio,hoy()):null;
+        const stColor={'Abierta':'bb','Enviada':'ba','En Negociación':'bo','Cobrada':'bg','Rechazada':'br','Conflicto':'br'};
+        return`<div class="rcard">
+          <div class="rcard-hdr">
+            <div>
+              <div class="rcardtitle">${r.aseguradora} — Siniestro ${r.numSiniestro}</div>
+              <div class="rcardsub">${veh?.matricula||'?'} ${veh?.marca} ${veh?.modelo} · ${a?.clienteNombre||'?'}</div>
+            </div>
+            <span class="bdg ${stColor[r.estado]||'bk'}">${r.estado}</span>
+          </div>
+          <div class="rdetails">
+            <div class="rdet"><div class="rdet-lbl">Apertura</div><div class="rdet-val">${fd(r.fechaApertura)}</div></div>
+            <div class="rdet"><div class="rdet-lbl">Días · Tarifa</div><div class="rdet-val">${r.importeDias||'—'} d · ${r.tarifaDia}€/d</div></div>
+            <div class="rdet"><div class="rdet-lbl">Importe</div><div class="rdet-val" style="color:#d97706;font-size:15px">${r.importeTotal?(r.importeTotal.toLocaleString('es-ES')+'€'):'—'}</div></div>
+            <div class="rdet"><div class="rdet-lbl">Enviado</div><div class="rdet-val">${r.fechaEnvio?fd(r.fechaEnvio):'—'}</div></div>
+            <div class="rdet"><div class="rdet-lbl">Sin respuesta</div><div class="rdet-val" style="${dsr>=30?'color:#ef4444':''}">${dsr!==null?dsr+'d':'—'}</div></div>
+            <div class="rdet"><div class="rdet-lbl">Cobrado</div><div class="rdet-val" style="color:#059669">${r.importeCobrado?(r.importeCobrado.toLocaleString('es-ES')+'€'):'—'}</div></div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <select class="sselect" onchange="updRec('${r.id}','estado',this.value)">
+              ${['Abierta','Enviada','En Negociación','Cobrada','Rechazada','Conflicto'].map(s=>`<option${r.estado===s?' selected':''}>${s}</option>`).join('')}
+            </select>
+            ${['Abierta','Enviada'].includes(r.estado)?`<button class="btn btn-s btn-sm" onclick="marcarEnv('${r.id}')">📤 Enviada hoy</button>`:''}
+            ${['Enviada','En Negociación'].includes(r.estado)?`<button class="btn btn-g btn-sm" onclick="regCobro('${r.id}')">💶 Registrar cobro</button>`:''}
+            <button class="btn-gh btn-sm" onclick="editNotas('${r.id}')">📝 Notas</button>
+            ${r.notas?`<span style="font-size:11px;color:#94a3b8;font-style:italic;max-width:200px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">${r.notas}</span>`:''}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+}
+
+function updRec(id,f,val){
+  const r=db.reclamaciones.find(r=>r.id===id);
+  if(r){r[f]=val;save();badges();toast('Estado actualizado');}
+}
+function marcarEnv(id){
+  const r=db.reclamaciones.find(r=>r.id===id);
+  if(r){r.estado='Enviada';r.fechaEnvio=hoy();save();toast('📤 Marcado como enviado','ok');renderReclamaciones();}
+}
+function regCobro(id){
+  const r=db.reclamaciones.find(r=>r.id===id);if(!r)return;
+  openModal('Registrar Cobro',`
+    <div style="color:#64748b;margin-bottom:14px">${r.aseguradora} — Siniestro <strong>${r.numSiniestro}</strong><br>
+    Reclamado: <strong>${r.importeTotal?.toLocaleString('es-ES')}€</strong></div>
+    <div class="fgrid">
+      <div class="fg"><label>Importe Cobrado (€) *</label><input type="number" id="ci" value="${r.importeTotal}" step="0.01"></div>
+      <div class="fg"><label>Fecha de Cobro *</label><input type="date" id="cf" value="${hoy()}"></div>
+    </div>`,`
+    <button class="btn btn-s" onclick="closeModal()">Cancelar</button>
+    <button class="btn btn-g" onclick="subCobro('${id}')">✅ Confirmar</button>`);
+}
+function subCobro(id){
+  const r=db.reclamaciones.find(r=>r.id===id);
+  const imp=parseFloat(document.getElementById('ci')?.value);
+  const f=document.getElementById('cf')?.value;
+  if(!r||!imp||!f){toast('Completa los campos','err');return;}
+  r.importeCobrado=imp;r.fechaCobro=f;r.estado='Cobrada';
+  save();closeModal();
+  const diff=r.importeTotal-imp;
+  toast(`💶 Cobro: ${imp.toLocaleString('es-ES')}€${diff>0?' (diferencia: '+diff.toLocaleString('es-ES')+'€)':''}`, 'ok');
+  renderReclamaciones();
+  // ── Write-back a Expedientes ──
+  const asigCobro=ga(r.asignacionId);
+  if(asigCobro?.orVinculada){
+    writeExpediente(asigCobro.orVinculada,{
+      'ESTADO_COBRO':   'Cobrado',
+      'FECHA_COBRO_ASEG': f
+    });
+  }
+}
+function editNotas(id){
+  const r=db.reclamaciones.find(r=>r.id===id);if(!r)return;
+  openModal('Notas de Seguimiento',`<textarea id="nt" style="width:100%;min-height:110px;border:1.5px solid #e2e8f0;border-radius:8px;padding:10px;font-family:inherit;font-size:13px" placeholder="Anotaciones de la negociación...">${r.notas||''}</textarea>`,`
+    <button class="btn btn-s" onclick="closeModal()">Cancelar</button>
+    <button class="btn btn-p" onclick="saveNotas('${id}')">Guardar</button>`);
+}
+function saveNotas(id){
+  const r=db.reclamaciones.find(r=>r.id===id);
+  if(r){r.notas=document.getElementById('nt').value;save();closeModal();toast('Notas guardadas');renderReclamaciones();}
+}
+
+// ──────────────────── SHEETS HELPERS ─────────────────────────
+async function onExpSearch(){
+  const q=(document.getElementById('exp-q')?.value||'').trim();
+  const res=document.getElementById('exp-result');
+  if(!q||!res)return;
+  if(!SHEETS_URL){res.style.display='';res.style.borderColor='var(--gold)';res.style.color='var(--gold)';res.innerHTML='⚠️ Configura SHEETS_URL primero';return;}
+  res.style.display='';res.style.borderColor='var(--border2)';res.innerHTML='⏳ Buscando…';
+  const data=await sheetsGet({action:'expediente',q});
+  if(!data){res.innerHTML='❌ Sin conexión con Sheets';return;}
+  if(!data.found){res.style.borderColor='var(--red)';res.style.color='var(--red)';res.innerHTML=`❌ No encontrado: "${q}"`;return;}
+  const d=data.data;
+  // Auto-fill según formulario activo
+  const tipo=curTipo()||'JM';
+  const fill=(id,val)=>{const el=document.getElementById(id);if(el&&val)el.value=val;};
+  if(tipo==='JM'){
+    fill('jor',    d['OR']);
+    fill('jnom',   d['PROPIETARIO']);
+    fill('jtel',   d['TELEFONO']);
+    fill('jemail', d['EMAIL']);
+    if(d['FECHA_COMPROMISO_ENTREGA'])fill('jfd',d['FECHA_COMPROMISO_ENTREGA']);
+  } else if(tipo==='Derechocar'){
+    fill('dor',    d['OR']);
+    fill('dnom',   d['PROPIETARIO']);
+    fill('dtel',   d['TELEFONO']);
+    fill('demail', d['EMAIL']);
+    fill('dsin',   d['Nº_SINIESTRO']||d['N_SINIESTRO']||d['NUMERO_SINIESTRO']||'');
+    fill('daseg',  d['ASEGURADORA']);
+    fill('dgest',  d['PERITO']);
+    if(d['FECHA_COMPROMISO_ENTREGA'])fill('dfd',d['FECHA_COMPROMISO_ENTREGA']);
+  } else {
+    fill('rmor',   d['OR']);
+    fill('rmnom',  d['PROPIETARIO']);
+    fill('rmtel',  d['TELEFONO']);
+    fill('rmemail',d['EMAIL']);
+    if(d['FECHA_COMPROMISO_ENTREGA'])fill('rmfd',d['FECHA_COMPROMISO_ENTREGA']);
+  }
+  // Mostrar resumen con datos extra del taller
+  const fase=d['FASE_TALLER']||'';
+  const recPend=d['RECAMBIOS_PENDIENTES']||'';
+  const recRecib=d['RECAMBIOS_RECIBIDOS']||'';
+  const marca=d['MARCA_MODELO']||'';
+  const matCli=d['MATRICULA']||'';
+  res.style.borderColor='var(--jm)';res.style.color='var(--text)';
+  res.innerHTML=`<span style="color:var(--jm);font-weight:700">✅ Datos rellenados</span>
+    <span style="color:var(--text3);margin-left:10px">${matCli?'🚗 '+matCli:''} ${marca}</span>
+    ${fase?`<br><span style="color:var(--text2)">Fase taller: <strong>${fase}</strong></span>`:''}
+    ${recPend?`<br><span style="color:var(--red)">🔩 Recambios pendientes: ${recPend}</span>`:''}
+    ${recRecib?`<br><span style="color:var(--jm)">✅ Recambios recibidos: ${recRecib}</span>`:''}`;
+}
+
+async function loadExpPanel(query){
+  const panel=document.getElementById('exp-data');if(!panel)return;
+  panel.innerHTML='<span style="font-size:12px;color:var(--text3)">⏳ Cargando expediente…</span>';
+  const data=await sheetsGet({action:'expediente',q:query});
+  if(!data?.found){panel.innerHTML=`<span style="font-size:12px;color:var(--text3)">Sin datos en Expedientes para "${query}"</span>`;return;}
+  const d=data.data;
+  const row=(k)=>d[k]?`<div class="rdet"><div class="rdet-lbl">${k.replace(/_/g,' ')}</div><div class="rdet-val" style="font-size:12px">${d[k]}</div></div>`:'';
+  panel.innerHTML=`<div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;margin-bottom:8px">📋 Expediente Motorcar</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+      ${row('MATRICULA')}${row('MARCA_MODELO')}${row('FASE_TALLER')}
+      ${row('OPERARIO_ASIGNADO')}${row('FECHA_COMPROMISO_ENTREGA')}${row('FECHA_ENTREGA_REAL')}
+      ${row('RECAMBIOS_RECIBIDOS')}${row('RECAMBIOS_PENDIENTES')}${row('ESTADO_COBRO')}
+      ${row('ASEGURADORA')}${row('N_SINIESTRO')||row('Nº_SINIESTRO')}${row('ESTADO_PRESUPUESTO')}
+    </div>`;
+}
+
+async function loadRecambiosPanel(orQuery,matQuery){
+  const panel=document.getElementById('exp-data');if(!panel)return;
+  const q=orQuery||matQuery;if(!q){panel.innerHTML='<span style="font-size:12px;color:var(--text3)">Sin OR/matrícula para buscar recambios</span>';return;}
+  panel.innerHTML='<span style="font-size:12px;color:var(--text3)">⏳ Cargando recambios…</span>';
+  const data=await sheetsGet({action:'recambios',q});
+  if(!data?.found||!data.data?.length){panel.innerHTML=`<span style="font-size:12px;color:var(--text3)">Sin recambios encontrados para "${q}"</span>`;return;}
+  const rows=data.data;
+  const pendientes=rows.filter(r=>(r['ESTADO']||'').toUpperCase()!=='RECIBIDO');
+  panel.innerHTML=`<div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;margin-bottom:8px">🔩 Recambios (${rows.length} pedidos, ${pendientes.length} pendientes)</div>
+    ${rows.map(r=>{
+      const est=r['ESTADO']||'';
+      const esRecibido=est.toUpperCase()==='RECIBIDO';
+      return`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px">
+        <span style="font-size:14px">${esRecibido?'✅':'⏳'}</span>
+        <div style="flex:1"><strong>${r['Descripción Pieza']||r['DESCRIPCION_PIEZA']||'—'}</strong><br>
+          <span style="color:var(--text3)">${r['Proveedor']||''} · ${r['Referencia']||''} · ${r['_sheet']||''}</span>
+        </div>
+        <span style="font-weight:700;color:${esRecibido?'var(--jm)':'var(--dc)'}">${est}</span>
+      </div>`;
+    }).join('')}`;
+}
+
+// ──────────────────── FLOTA ──────────────────────────────────
+function renderFlota(){
+  document.getElementById('pg-actions').innerHTML=`
+    <button class="btn btn-s" onclick="showPlantillas()">📄 Plantillas contrato</button>
+    <button class="btn btn-s" onclick="showAddV()">+ Añadir vehículo</button>`;
+  const jm=db.vehiculos.filter(v=>v.tipo==='JM');
+  const dc=db.vehiculos.filter(v=>v.tipo==='Derechocar');
+  const rm=db.vehiculos.filter(v=>v.tipo==='RM');
+  document.getElementById('content').innerHTML=`
+    <div class="tcol">
+      <div>
+        <div class="shdr"><div class="stitle">Flota JM (${jm.length} vehículos)</div></div>
+        <div style="display:flex;flex-direction:column;gap:10px">${jm.map(fc).join('')}</div>
+      </div>
+      <div>
+        <div class="shdr"><div class="stitle">Flota Derechocar (${dc.length} vehículos)</div></div>
+        <div style="display:flex;flex-direction:column;gap:10px">${dc.map(fc).join('')}</div>
+      </div>
+    </div>
+    ${rm.length>0?`<div style="margin-top:14px">
+      <div class="shdr"><div class="stitle">Flota RM (${rm.length} vehículos)</div></div>
+      <div style="display:flex;flex-direction:column;gap:10px">${rm.map(fc).join('')}</div>
+    </div>`:''}`;
+}
+
+function fc(veh){
+  const a=activeAsig(veh.id);
+  const tipoCls=veh.tipo==='JM'?'bg':veh.tipo==='Derechocar'?'ba':'bp';
+  return`<div class="card">
+    <div class="card-hdr">
+      <div style="display:flex;align-items:center;gap:9px">
+        <span class="bdg ${tipoCls}">${veh.tipo}</span>
+        <strong style="font-size:15px;font-family:monospace">${veh.matricula}</strong>
+        <span style="color:#64748b;font-size:13px">${veh.marca} ${veh.modelo} · ${veh.año}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        ${veh.tipo==='Derechocar'?`<span style="font-size:12px;color:#d97706;font-weight:600">${veh.tarifaDia}€/día</span>`:''}
+        <select class="sselect" onchange="updVst('${veh.id}',this.value)" ${a?'disabled title="Asignado — devolver primero"':''}>
+          ${['Disponible','Asignado','Taller','Baja'].map(s=>`<option${veh.estado===s?' selected':''}>${s}</option>`).join('')}
+        </select>
+        <button class="btn-gh btn-sm" onclick="editVeh('${veh.id}')" title="Editar vehículo">✏️</button>
+        <button class="btn-gh btn-sm" onclick="deleteVeh('${veh.id}')" title="Eliminar vehículo" style="color:var(--red);border-color:rgba(231,76,60,.3)">🗑️</button>
+      </div>
+    </div>
+    ${a?`<div style="padding:9px 16px;background:rgba(255,255,255,.03);border-top:1px solid var(--border);font-size:12px;color:#64748b">
+      Asignado a <strong>${a.clienteNombre}</strong> · Dev. prevista: ${fd(a.fechaDevolucionPrevista)}
+    </div>`:''}
+  </div>`;
+}
+
+function updVst(id,est){const veh=gv(id);if(veh){veh.estado=est;save();toast(`${veh.matricula} → ${est}`);renderFlota();}}
+
+function editVeh(id){
+  const veh=gv(id);if(!veh)return;
+  openModal(`Editar — ${veh.matricula}`,`
+    <div class="fgrid">
+      <div class="fg"><label>Tipo</label>
+        <select id="et" onchange="document.getElementById('et-tar').style.display=this.value==='Derechocar'?'':'none'">
+          <option value="JM"${veh.tipo==='JM'?' selected':''}>JM (Silvia)</option>
+          <option value="Derechocar"${veh.tipo==='Derechocar'?' selected':''}>Derechocar (Thays)</option>
+          <option value="RM"${veh.tipo==='RM'?' selected':''}>RM</option>
+        </select>
+      </div>
+      <div class="fg"><label>Matrícula *</label><input type="text" id="em" value="${veh.matricula}" style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase()"></div>
+      <div class="fg"><label>Marca *</label><input type="text" id="emr" value="${veh.marca}"></div>
+      <div class="fg"><label>Modelo *</label><input type="text" id="emo" value="${veh.modelo}"></div>
+      <div class="fg"><label>Año</label><input type="number" id="eaño" value="${veh.año}" min="2000" max="2035"></div>
+      <div class="fg" id="et-tar" style="${veh.tipo==='Derechocar'?'':'display:none'}"><label>Tarifa/día (€)</label><input type="number" id="etar" value="${veh.tarifaDia||45}"></div>
+    </div>`,`
+    <button class="btn btn-s" onclick="closeModal()">Cancelar</button>
+    <button class="btn btn-p" onclick="subEditV('${id}')">Guardar cambios</button>`);
+}
+
+function subEditV(id){
+  const veh=gv(id);if(!veh)return;
+  const mat=v('em'),mar=v('emr'),mod=v('emo');
+  if(!mat||!mar||!mod){toast('Completa los campos obligatorios','err');return;}
+  veh.matricula=mat.toUpperCase();
+  veh.marca=mar;veh.modelo=mod;
+  veh.año=parseInt(v('eaño'))||veh.año;
+  const tipoAnterior=veh.tipo;
+  veh.tipo=v('et')||veh.tipo;
+  veh.gestor=veh.tipo==='JM'?'Silvia':veh.tipo==='Derechocar'?'Thays':'—';
+  if(veh.tipo==='Derechocar')veh.tarifaDia=parseFloat(v('etar'))||45;
+  save();closeModal();toast(`✅ ${veh.matricula} actualizado`,'ok');renderFlota();
+}
+
+function deleteVeh(id){
+  const veh=gv(id);if(!veh)return;
+  if(activeAsig(id)){toast('⚠️ Tiene una asignación activa — devuélvelo primero','err');return;}
+  openModal('Eliminar vehículo',`
+    <div style="text-align:center;padding:16px 0">
+      <div style="font-size:36px;margin-bottom:12px">🗑️</div>
+      <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:6px">${veh.matricula}</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:6px">${veh.marca} ${veh.modelo} · ${veh.año}</div>
+      <div style="font-size:12px;color:var(--text3)">Se eliminará de la flota. El historial de asignaciones se conserva.</div>
+    </div>`,`
+    <button class="btn btn-s" onclick="closeModal()">Cancelar</button>
+    <button class="btn btn-d" onclick="confirmDeleteVeh('${id}')">🗑️ Eliminar</button>`);
+}
+
+function confirmDeleteVeh(id){
+  const veh=gv(id);if(!veh)return;
+  db.vehiculos=db.vehiculos.filter(x=>x.id!==id);
+  save();closeModal();toast(`🗑️ ${veh.matricula} eliminado de la flota`,'w');renderFlota();
+}
+
+// ──────────── PLANTILLAS DE CONTRATO ─────────────────────────
+function showPlantillas(){
+  const pl=db.plantillas||[];
+  const lista=pl.length===0
+    ?`<div style="text-align:center;padding:20px;color:var(--text3);font-size:13px">Sin plantillas guardadas</div>`
+    :pl.map(p=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--card2);border:1px solid var(--border);border-radius:8px;margin-bottom:6px">
+        <div style="font-size:18px">${p.tipo==='pdf'?'📄':'📝'}</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:600;color:#fff">${p.nombre}</div>
+          <div style="font-size:11px;color:var(--text3)">${p.tipo==='link'?p.url:p.descripcion||'Plantilla subida'} · ${fd(p.fecha)}</div>
+        </div>
+        <button class="btn-gh btn-sm" onclick="usarPlantilla('${p.id}')" title="Abrir plantilla">📂</button>
+        <button class="btn-gh btn-sm" onclick="deletePlantilla('${p.id}')" style="color:var(--red);border-color:rgba(231,76,60,.3)">🗑️</button>
+      </div>`).join('');
+
+  openModal('📄 Plantillas de Contrato',`
+    <div style="margin-bottom:16px;font-size:12px;color:var(--text2)">
+      Guarda aquí el enlace a tu contrato base en Google Drive, o sube un PDF de plantilla.
+    </div>
+    ${lista}
+    <div style="border-top:1px solid var(--border);padding-top:14px;margin-top:10px">
+      <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;margin-bottom:10px">Añadir plantilla</div>
+      <div class="tabs" style="margin-bottom:12px">
+        <button class="tbbtn active" onclick="swTab('tp-link',this)">🔗 Link Google Drive</button>
+        <button class="tbbtn" onclick="swTab('tp-pdf',this)">📄 Subir PDF</button>
+      </div>
+      <div id="tp-link" class="tbpanel active">
+        <div class="fgrid">
+          <div class="fg"><label>Nombre de la plantilla</label><input type="text" id="pl-nom" placeholder="Ej: Contrato JM 2026"></div>
+          <div class="fg"><label>URL Google Drive / Docs</label><input type="url" id="pl-url" placeholder="https://drive.google.com/..."></div>
+        </div>
+        <button class="btn btn-p btn-sm" style="margin-top:10px" onclick="addPlantillaLink()">Guardar enlace</button>
+      </div>
+      <div id="tp-pdf" class="tbpanel">
+        <div class="fg" style="margin-bottom:10px"><label>Nombre de la plantilla</label><input type="text" id="pl-pdf-nom" placeholder="Ej: Contrato Derechocar 2026"></div>
+        <div style="border:2px dashed var(--border2);border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:border-color .15s" onclick="document.getElementById('pl-file').click()" id="drop-zone">
+          <div style="font-size:28px;margin-bottom:6px">📁</div>
+          <div style="font-size:13px;color:var(--text2)">Haz clic para seleccionar un PDF</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:3px">Máx 5 MB</div>
+        </div>
+        <input type="file" id="pl-file" accept=".pdf" style="display:none" onchange="onPlantillaFile(this)">
+        <div id="pl-file-info" style="display:none;margin-top:8px;font-size:12px;color:var(--jm)"></div>
+        <button id="pl-pdf-btn" class="btn btn-p btn-sm" style="margin-top:10px;display:none" onclick="addPlantillaPDF()">Guardar PDF</button>
+      </div>
+    </div>`,`<button class="btn btn-s" onclick="closeModal()">Cerrar</button>`);
+}
+
+let _plPDFData=null;
+function onPlantillaFile(input){
+  const file=input.files[0];if(!file)return;
+  if(file.size>5*1024*1024){toast('PDF demasiado grande (máx 5 MB)','err');return;}
+  const reader=new FileReader();
+  reader.onload=e=>{
+    _plPDFData={name:file.name,data:e.target.result};
+    document.getElementById('pl-file-info').style.display='';
+    document.getElementById('pl-file-info').textContent=`✅ ${file.name} (${(file.size/1024).toFixed(0)} KB)`;
+    document.getElementById('pl-pdf-btn').style.display='inline-flex';
+    document.getElementById('drop-zone').style.borderColor='var(--jm)';
+  };
+  reader.readAsDataURL(file);
+}
+
+function addPlantillaLink(){
+  const nom=v('pl-nom'),url=v('pl-url');
+  if(!nom||!url){toast('Indica nombre y URL','err');return;}
+  if(!db.plantillas)db.plantillas=[];
+  db.plantillas.push({id:uid(),nombre:nom,tipo:'link',url,fecha:hoy()});
+  save();toast('✅ Enlace guardado','ok');showPlantillas();
+}
+
+function addPlantillaPDF(){
+  const nom=v('pl-pdf-nom');
+  if(!nom){toast('Indica un nombre para la plantilla','err');return;}
+  if(!_plPDFData){toast('Selecciona un PDF primero','err');return;}
+  if(!db.plantillas)db.plantillas=[];
+  db.plantillas.push({id:uid(),nombre:nom,tipo:'pdf',pdfData:_plPDFData.data,descripcion:_plPDFData.name,fecha:hoy()});
+  _plPDFData=null;
+  save();toast('✅ PDF guardado como plantilla','ok');showPlantillas();
+}
+
+function usarPlantilla(id){
+  const p=(db.plantillas||[]).find(x=>x.id===id);if(!p)return;
+  if(p.tipo==='link'){window.open(p.url,'_blank');return;}
+  if(p.tipo==='pdf'){
+    const a=document.createElement('a');
+    a.href=p.pdfData;a.download=p.descripcion||'plantilla.pdf';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    toast('📄 PDF descargado');
+  }
+}
+
+function deletePlantilla(id){
+  db.plantillas=(db.plantillas||[]).filter(x=>x.id!==id);
+  save();toast('Plantilla eliminada','w');showPlantillas();
+}
+
+function showAddV(){
+  openModal('Añadir Vehículo',`
+    <div class="fgrid">
+      <div class="fg"><label>Tipo *</label>
+        <select id="at" onchange="document.getElementById('at-tar').style.display=this.value==='Derechocar'?'':'none'">
+          <option value="JM">JM (Silvia)</option>
+          <option value="Derechocar">Derechocar (Thays)</option>
+          <option value="RM">RM</option>
+        </select>
+      </div>
+      <div class="fg"><label>Matrícula *</label><input type="text" id="am" placeholder="0000-AAA" style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase()"></div>
+      <div class="fg"><label>Marca *</label><input type="text" id="amr" placeholder="Seat"></div>
+      <div class="fg"><label>Modelo *</label><input type="text" id="amo" placeholder="Ibiza"></div>
+      <div class="fg"><label>Año</label><input type="number" id="aañ" value="2024" min="2000" max="2030"></div>
+      <div class="fg" id="at-tar" style="display:none"><label>Tarifa/día (€)</label><input type="number" id="atar" value="45"></div>
+    </div>`,`
+    <button class="btn btn-s" onclick="closeModal()">Cancelar</button>
+    <button class="btn btn-p" onclick="subAddV()">Añadir</button>`);
+}
+function subAddV(){
+  const [tipo,mat,mar,mod]=[v('at')||'JM',v('am'),v('amr'),v('amo')];
+  if(!mat||!mar||!mod){toast('Completa los campos obligatorios','err');return;}
+  db.vehiculos.push({id:uid(),tipo,matricula:mat.toUpperCase(),marca:mar,modelo:mod,
+    año:parseInt(v('aañ'))||2024,estado:'Disponible',
+    gestor:tipo==='JM'?'Silvia':'Thays',
+    tarifaDia:tipo==='Derechocar'?parseFloat(v('atar'))||45:0});
+  save();closeModal();toast(`✅ ${mat.toUpperCase()} añadido a la flota`,'ok');renderFlota();
+}
+
+// ──────────────────── HISTORIAL ──────────────────────────────
+function renderHistorial(){
+  document.getElementById('pg-actions').innerHTML=`
+    <input id="hs" type="text" placeholder="🔍 Buscar cliente, matrícula, DNI..."
+      style="padding:7px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:13px;width:240px"
+      oninput="filtHist(this.value)">`;
+  drawHist(db.asignaciones);
+}
+
+function drawHist(items){
+  const s=[...items].sort((a,b)=>new Date(b.fechaSolicitud)-new Date(a.fechaSolicitud));
+  document.getElementById('content').innerHTML=s.length===0?emptyS('📁','Sin registros'):`
+    <div class="tbox"><table>
+      <thead><tr><th>Fecha</th><th>Vehículo</th><th>Tipo</th><th>Cliente</th><th>DNI</th><th>Entrega</th><th>Devolución</th><th>Estado</th></tr></thead>
+      <tbody>${s.map(a=>{
+        const veh=gv(a.vehiculoId);
+        return`<tr>
+          <td style="color:#94a3b8;white-space:nowrap">${fd(a.fechaSolicitud)}</td>
+          <td><strong>${veh?.matricula||'?'}</strong><br><small style="color:#94a3b8">${veh?.marca} ${veh?.modelo}</small></td>
+          <td><span class="bdg ${a.tipo==='JM'?'bg':'ba'}">${a.tipo}</span></td>
+          <td>${a.clienteNombre}<br><small style="color:#94a3b8">${a.clienteTel}</small></td>
+          <td style="color:#64748b">${a.clienteDni}</td>
+          <td style="white-space:nowrap">${fd(a.fechaEntrega)}</td>
+          <td style="white-space:nowrap">${a.fechaDevolucionReal?fd(a.fechaDevolucionReal):`<span style="color:#94a3b8">${fd(a.fechaDevolucionPrevista)} (prev.)</span>`}</td>
+          <td><span class="bdg ${a.estado==='Activa'?'bb':a.estado==='Devuelta'?'bg':'bk'}">${a.estado}</span></td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table></div>`;
+}
+
+function filtHist(q){
+  if(!q){drawHist(db.asignaciones);return;}
+  const l=q.toLowerCase();
+  drawHist(db.asignaciones.filter(a=>{
+    const veh=gv(a.vehiculoId);
+    return[a.clienteNombre,a.clienteDni,a.clienteTel,veh?.matricula,a.orVinculada,a.aseguradora,a.numSiniestro]
+      .some(x=>(x||'').toLowerCase().includes(l));
+  }));
+}
+
+// ──────────────────── CONTRATO ───────────────────────────────
+function _buildContratoHTML(aid){
+  const a=ga(aid),veh=a?gv(a.vehiculoId):null;
+  if(!a||!veh)return null;
+  const isJM=a.tipo==='JM';
+  return`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+  <title>Contrato Cesión — ${veh.matricula}</title>
+  <style>
+    body{font-family:Arial,sans-serif;max-width:680px;margin:36px auto;color:#111;font-size:13px;line-height:1.65;padding:0 20px}
+    h1{font-size:19px;text-align:center;margin-bottom:4px}
+    .sub{text-align:center;color:#555;margin-bottom:28px;font-size:12px}
+    .sec{margin-bottom:22px}
+    .stit{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:#f0f0f0;padding:6px 10px;border-left:4px solid #333;margin-bottom:10px}
+    table{width:100%;border-collapse:collapse}
+    td{padding:6px 10px;border-bottom:1px solid #eee}
+    td:first-child{font-weight:600;width:42%;color:#444}
+    .firmas{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:56px}
+    .firma-box{text-align:center}
+    .fline{border-top:1px solid #333;margin-top:56px;padding-top:8px;font-size:11px;color:#555}
+    .cls{font-size:11px;color:#666;margin-top:20px}
+    .cls p{margin-bottom:7px}
+    .pbtn{text-align:center;margin-bottom:22px}
+    .pbtn button{padding:9px 22px;background:#1d4ed8;color:#fff;border:none;border-radius:7px;font-size:13px;cursor:pointer}
+    @media print{.pbtn{display:none}}
+  </style></head><body>
+  <div class="pbtn"><button onclick="window.print()">🖨️ Imprimir / Guardar como PDF</button></div>
+  <h1>CONTRATO DE CESIÓN DE VEHÍCULO DE SUSTITUCIÓN</h1>
+  <div class="sub">${isJM?'Taller JM · Grupo Motorcar':'Derechocar · Vehículo por Siniestro'} &nbsp;|&nbsp; Ref: ${aid.toUpperCase().slice(0,8)}</div>
+  <div class="sec"><div class="stit">Datos del Cedente</div><table>
+    <tr><td>Empresa</td><td>${isJM?'Taller JM / Grupo Motorcar':'Derechocar'}</td></tr>
+    <tr><td>Gestor responsable</td><td>${a.gestor}</td></tr>
+  </table></div>
+  <div class="sec"><div class="stit">Datos del Cesionario</div><table>
+    <tr><td>Nombre completo</td><td>${a.clienteNombre}</td></tr>
+    <tr><td>DNI / NIE</td><td>${a.clienteDni}</td></tr>
+    <tr><td>Teléfono</td><td>${a.clienteTel}</td></tr>
+    <tr><td>Email</td><td>${a.clienteEmail||'—'}</td></tr>
+  </table></div>
+  <div class="sec"><div class="stit">Datos del Vehículo</div><table>
+    <tr><td>Matrícula</td><td><strong>${veh.matricula}</strong></td></tr>
+    <tr><td>Marca / Modelo</td><td>${veh.marca} ${veh.modelo}</td></tr>
+    <tr><td>Año</td><td>${veh.año}</td></tr>
+    <tr><td>KM en la entrega</td><td>${a.kmSalida||0} km</td></tr>
+  </table></div>
+  <div class="sec"><div class="stit">Condiciones de la Cesión</div><table>
+    <tr><td>Fecha de entrega</td><td>${fd(a.fechaEntrega)}</td></tr>
+    <tr><td>Devolución prevista</td><td>${fd(a.fechaDevolucionPrevista)}</td></tr>
+    <tr><td>OR vinculada</td><td>${a.orVinculada||'—'}</td></tr>
+    ${!isJM?`<tr><td>Nº Siniestro</td><td>${a.numSiniestro}</td></tr><tr><td>Aseguradora responsable</td><td>${a.aseguradora}</td></tr>`:''}
+    <tr><td>Coste para el cesionario</td><td>${isJM?'<strong>GRATUITO</strong>':'A cargo de la aseguradora responsable del siniestro'}</td></tr>
+  </table></div>
+  <div class="cls"><div class="stit">Cláusulas</div>
+    <p>1. El cesionario se compromete a devolver el vehículo en las mismas condiciones en que lo recibió, en la fecha acordada.</p>
+    <p>2. El cesionario es responsable de cualquier daño, multa o infracción ocurridos durante el período de cesión.</p>
+    <p>3. El vehículo está cubierto por el seguro del cedente. El cesionario debe disponer de carnet de conducir en vigor.</p>
+    <p>4. En caso de accidente o incidencia, el cesionario notificará de inmediato al cedente.</p>
+    <p>5. La cesión queda supeditada a la finalización de los trabajos de reparación del vehículo del cesionario en el taller.</p>
+  </div>
+  <div class="firmas">
+    <div class="firma-box"><div class="fline">Por el Cedente<br>${isJM?'Taller JM / Grupo Motorcar':'Derechocar'}</div></div>
+    <div class="firma-box"><div class="fline">El Cesionario<br>${a.clienteNombre} · DNI ${a.clienteDni}</div></div>
+  </div>
+  <p style="text-align:center;margin-top:36px;font-size:10px;color:#aaa">Generado: ${new Date().toLocaleDateString('es-ES')} · ${new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}</p>
+  </body></html>`;
+}
+
+function copiarVal(el){
+  const t=el.dataset.v||'';
+  navigator.clipboard.writeText(t).then(()=>toast('📋 Copiado','ok')).catch(()=>toast('No se pudo copiar','err'));
+}
+
+function genContrato(aid){
+  const a=ga(aid),veh=a?gv(a.vehiculoId):null;
+  if(!a||!veh){toast('Asignación no encontrada','err');return;}
+  const hasPl=(db.plantillas||[]).length>0;
+  openModal(`Contrato — ${veh.matricula}`,`
+    <div style="margin-bottom:16px;font-size:13px;color:#64748b">
+      Cliente: <strong>${a.clienteNombre}</strong> · ${veh.marca} ${veh.modelo}
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div onclick="firmaFisica('${aid}')" style="border:2px solid #e2e8f0;border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='#2563eb'" onmouseout="this.style.borderColor='#e2e8f0'">
+        <div style="font-size:32px;margin-bottom:10px">🖨️</div>
+        <div style="font-size:14px;font-weight:700;color:#0f172a;margin-bottom:6px">Firma física</div>
+        <div style="font-size:11px;color:#64748b">Imprimir · Firmar · Escanear</div>
+        <div style="margin-top:10px;font-size:10px;color:#94a3b8">Funciona siempre,<br>sin internet</div>
+      </div>
+      <div onclick="firmaOnline('${aid}')" style="border:2px solid #e2e8f0;border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='#25D366'" onmouseout="this.style.borderColor='#e2e8f0'">
+        <div style="font-size:32px;margin-bottom:10px">📱</div>
+        <div style="font-size:14px;font-weight:700;color:#0f172a;margin-bottom:6px">Firma online</div>
+        <div style="font-size:11px;color:#64748b">DocuSeal · WhatsApp</div>
+        <div style="margin-top:10px;font-size:10px;color:#94a3b8">El cliente firma<br>desde su móvil</div>
+      </div>
+    </div>
+    <div style="margin-top:12px;border:2px solid #e2e8f0;border-radius:12px;padding:14px 20px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:14px" onclick="usarPlantillaConAsig('${aid}')" onmouseover="this.style.borderColor='#7c3aed'" onmouseout="this.style.borderColor='#e2e8f0'">
+      <div style="font-size:28px">📄</div>
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:700;color:#0f172a">Mis Plantillas${hasPl?'':' <span style="font-size:11px;color:#94a3b8;font-weight:400">(aún sin plantillas)</span>'}</div>
+        <div style="font-size:11px;color:#64748b">Usa tu contrato personalizado · datos autorrellenados</div>
+      </div>
+      <div style="font-size:18px;color:#94a3b8">›</div>
+    </div>
+    ${a.metodoFirma?`<div style="margin-top:14px;padding:8px 12px;background:#f0fdf4;border-radius:8px;font-size:12px;color:#065f46">✓ Este contrato ya fue firmado por <strong>${a.metodoFirma==='fisica'?'método físico':'firma online'}</strong> el ${fd(a.fechaFirma||'')}</div>`:''}
+  `,`<button class="btn btn-s" onclick="closeModal()">Cancelar</button>`);
+}
+
+function usarPlantillaConAsig(aid){
+  const a=ga(aid),veh=a?gv(a.vehiculoId):null;
+  if(!a||!veh)return;
+  const pl=db.plantillas||[];
+  const fd2=s=>s?new Date(s).toLocaleDateString('es-ES'):'—';
+
+  const filasDatos=[
+    ['NOMBRE',a.clienteNombre||''],
+    ['DNI',a.clienteDni||''],
+    ['TELEFONO',a.clienteTel||''],
+    ['EMAIL',a.clienteEmail||''],
+    ['MATRICULA',veh.matricula||''],
+    ['MARCA',veh.marca||''],
+    ['MODELO',veh.modelo||''],
+    ['AÑO',String(veh.año||'')],
+    ['FECHA_ENTREGA',fd2(a.fechaEntrega)],
+    ['FECHA_DEVOLUCION',fd2(a.fechaDevolucionPrevista)],
+    ['OR',a.orVinculada||''],
+    ['KM_SALIDA',String(a.kmSalida||0)],
+    ...(a.numSiniestro?[['NUM_SINIESTRO',a.numSiniestro],['ASEGURADORA',a.aseguradora||'']]:[]),
+  ];
+
+  const tablaHTML=filasDatos.map(([k,val])=>`
+    <tr>
+      <td style="padding:5px 10px;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;white-space:nowrap;background:#f8fafc;border-bottom:1px solid #f1f5f9">{{${k}}}</td>
+      <td style="padding:5px 10px;font-size:13px;font-family:monospace;color:#0f172a;border-bottom:1px solid #f1f5f9">
+        <span style="cursor:pointer;user-select:none" data-v="${val.replace(/"/g,'&quot;')}" onclick="copiarVal(this)" title="Clic para copiar">${val||'<span style=color:#94a3b8>—</span>'} <span style="font-size:10px;color:#94a3b8">📋</span></span>
+      </td>
+    </tr>`).join('');
+
+  const listaPlantillas=pl.length===0
+    ?`<div style="padding:16px;text-align:center;color:#94a3b8;font-size:13px">Sin plantillas — ve a <strong>Ajustes → Plantillas</strong> para añadir la tuya</div>`
+    :pl.map(p=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;margin-bottom:6px;background:#f8fafc">
+      <div style="font-size:20px">${p.tipo==='pdf'?'📄':'🔗'}</div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:600;color:#0f172a">${p.nombre}</div>
+        <div style="font-size:11px;color:#94a3b8">${p.tipo==='link'?p.url:p.descripcion||'PDF'}</div>
+      </div>
+      ${p.tipo==='link'&&SHEETS_URL?`<button class="btn btn-p btn-sm" id="btn-rel-${p.id}" onclick="crearDocRellenado('${aid}','${p.id}',this)">✨ Crear rellenado</button>`:''}
+      <button class="btn-gh btn-sm" onclick="${p.tipo==='link'?`window.open('${p.url}','_blank')`:`descargarPlantillaPDF('${p.id}')`}">📂 Abrir</button>
+    </div>`).join('');
+
+  openModal(`📄 Mis Plantillas — ${veh.matricula}`,`
+    <div style="margin-bottom:14px">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#64748b;margin-bottom:8px;letter-spacing:.06em">Datos del contrato <span style="font-weight:400;text-transform:none">(clic en cada valor para copiarlo)</span></div>
+      <table style="width:100%;border-collapse:collapse;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden">${tablaHTML}</table>
+    </div>
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#64748b;margin-bottom:8px;letter-spacing:.06em">Selecciona plantilla</div>
+    ${listaPlantillas}
+    ${SHEETS_URL&&pl.some(p=>p.tipo==='link')?`<div style="margin-top:10px;padding:8px 12px;background:#faf5ff;border:1px solid #e9d5ff;border-radius:8px;font-size:11px;color:#6b21a8">
+      💡 <strong>✨ Crear rellenado</strong> crea una copia de tu Google Doc con los {{campos}} ya sustituidos. Tu plantilla debe usar <code style="background:#f3e8ff;padding:1px 4px;border-radius:3px">{{NOMBRE}}</code>, <code style="background:#f3e8ff;padding:1px 4px;border-radius:3px">{{DNI}}</code>, etc.
+    </div>`:''}
+  `,`<button class="btn btn-s" onclick="closeModal()">Cerrar</button>`);
+}
+
+function descargarPlantillaPDF(plId){
+  const p=(db.plantillas||[]).find(x=>x.id===plId);
+  if(!p||!p.pdfData)return;
+  const a=document.createElement('a');a.href=p.pdfData;a.download=p.descripcion||'plantilla.pdf';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);toast('📄 PDF descargado');
+}
+
+async function crearDocRellenado(aid,plId,btn){
+  const a=ga(aid),veh=a?gv(a.vehiculoId):null;
+  const p=(db.plantillas||[]).find(x=>x.id===plId);
+  if(!a||!veh||!p){toast('Datos no encontrados','err');return;}
+  const orig=btn.textContent;
+  btn.disabled=true;btn.textContent='⏳ Creando...';
+  const fd2=s=>s?new Date(s).toLocaleDateString('es-ES'):'';
+  try{
+    const res=await fetch(SHEETS_URL,{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action:'crearDocumento',templateUrl:p.url,
+        datos:{
+          NOMBRE:a.clienteNombre||'',DNI:a.clienteDni||'',TELEFONO:a.clienteTel||'',EMAIL:a.clienteEmail||'',
+          MATRICULA:veh.matricula||'',MARCA:veh.marca||'',MODELO:veh.modelo||'',AÑO:String(veh.año||''),
+          FECHA_ENTREGA:fd2(a.fechaEntrega),FECHA_DEVOLUCION:fd2(a.fechaDevolucionPrevista),
+          OR:a.orVinculada||'',KM_SALIDA:String(a.kmSalida||0),
+          NUM_SINIESTRO:a.numSiniestro||'',ASEGURADORA:a.aseguradora||'',
+        }
+      })
+    });
+    const d=await res.json();
+    if(d.ok&&d.url){
+      btn.textContent='✅ Abrir doc';btn.disabled=false;
+      btn.style.background='#059669';btn.style.color='#fff';
+      btn.onclick=()=>window.open(d.url,'_blank');
+      toast('✅ Documento creado y rellenado','ok');
+    }else{
+      btn.textContent=orig;btn.disabled=false;
+      toast(d.error||'Error al crear documento','err');
+    }
+  }catch(e){
+    btn.textContent=orig;btn.disabled=false;
+    toast('Error de conexión con Apps Script','err');
+  }
+}
+
+function firmaFisica(aid){
+  const a=ga(aid),veh=a?gv(a.vehiculoId):null;
+  if(!a||!veh)return;
+  openModal(`Firma Física — ${veh.matricula}`,`
+    <div style="display:flex;flex-direction:column;gap:0">
+      <div style="display:flex;gap:14px;padding:0 0 18px;border-bottom:1px solid #f1f5f9">
+        <div id="f1c" style="width:28px;height:28px;border-radius:50%;background:#2563eb;color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">1</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;color:#0f172a;margin-bottom:3px">Genera e imprime el contrato</div>
+          <div style="font-size:12px;color:#64748b;margin-bottom:10px">Abre el contrato y usa Imprimir → Guardar como PDF o imprime directamente</div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <button class="btn btn-p btn-sm" onclick="abrirContrato('${aid}');f1done()">🖨️ Abrir contrato</button>
+            <span id="f1ok" style="display:none;font-size:12px;color:#059669;font-weight:700">✓ Listo</span>
+          </div>
+        </div>
+      </div>
+      <div id="f2blk" style="display:flex;gap:14px;padding:18px 0;border-bottom:1px solid #f1f5f9;opacity:.35;pointer-events:none;transition:opacity .3s">
+        <div id="f2c" style="width:28px;height:28px;border-radius:50%;background:#cbd5e1;color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">2</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;color:#0f172a;margin-bottom:3px">El cliente firma en papel</div>
+          <div style="font-size:12px;color:#64748b;margin-bottom:10px">Firma el contrato impreso junto con el cliente. Ambas partes conservan una copia.</div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <button class="btn btn-s btn-sm" onclick="f2done()">✅ Firmado</button>
+            <span id="f2ok" style="display:none;font-size:12px;color:#059669;font-weight:700">✓ Confirmado</span>
+          </div>
+        </div>
+      </div>
+      <div id="f3blk" style="display:flex;gap:14px;padding:18px 0 4px;opacity:.35;pointer-events:none;transition:opacity .3s">
+        <div id="f3c" style="width:28px;height:28px;border-radius:50%;background:#cbd5e1;color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">3</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;color:#0f172a;margin-bottom:3px">Escanea y sube a Drive</div>
+          <div style="font-size:12px;color:#64748b;margin-bottom:10px">Escanea el contrato firmado (o haz una foto) y súbelo a Drive</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-s btn-sm" onclick="window.open('https://drive.google.com/drive/folders/18BSniQVrC9YeyxhaU','_blank')">📁 Abrir Drive</button>
+            <button id="f3btn" class="btn btn-g btn-sm" onclick="marcarFirmadoFisico('${aid}')" disabled style="opacity:.5;cursor:not-allowed">✓ Marcar como firmado</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `,`<button class="btn btn-s" onclick="closeModal()">Cerrar</button>`);
+}
+
+function f1done(){
+  document.getElementById('f1ok').style.display='inline';
+  document.getElementById('f1c').style.background='#059669';document.getElementById('f1c').textContent='✓';
+  const b=document.getElementById('f2blk');b.style.opacity='1';b.style.pointerEvents='auto';
+  document.getElementById('f2c').style.background='#2563eb';
+}
+function f2done(){
+  document.getElementById('f2ok').style.display='inline';
+  document.getElementById('f2c').style.background='#059669';document.getElementById('f2c').textContent='✓';
+  const b=document.getElementById('f3blk');b.style.opacity='1';b.style.pointerEvents='auto';
+  document.getElementById('f3c').style.background='#2563eb';
+  const btn=document.getElementById('f3btn');btn.disabled=false;btn.style.opacity='1';btn.style.cursor='pointer';
+}
+function marcarFirmadoFisico(aid){
+  const a=ga(aid);if(!a)return;
+  a.metodoFirma='fisica';a.fechaFirma=hoy();
+  save();closeModal();toast('✅ Contrato firmado físicamente registrado','ok');
+  if(curView==='dashboard')renderDashboard();else if(curView==='asignaciones')renderAsignaciones();
+}
+
+function firmaOnline(aid){
+  const a=ga(aid),veh=a?gv(a.vehiculoId):null;
+  if(!a||!veh){toast('Asignación no encontrada','err');return;}
+  openModal(`Firma Online — ${veh.matricula} · DocuSeal + WhatsApp`,`
+    <div style="display:flex;flex-direction:column">
+
+      <div style="display:flex;gap:14px;padding:0 0 18px;border-bottom:1px solid #f1f5f9">
+        <div id="c1" style="width:28px;height:28px;border-radius:50%;background:#2563eb;color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;transition:all .3s">1</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;color:#0f172a;margin-bottom:3px">Genera el contrato PDF</div>
+          <div style="font-size:12px;color:#64748b;margin-bottom:10px">Abre el contrato y guárdalo como PDF (Imprimir → Guardar como PDF)</div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <button class="btn btn-p btn-sm" onclick="abrirContrato('${aid}')">📄 Abrir contrato</button>
+            <span id="ok1" style="display:none;font-size:12px;color:#059669;font-weight:700">✓ Generado</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="blk2" style="display:flex;gap:14px;padding:18px 0;border-bottom:1px solid #f1f5f9;opacity:.35;pointer-events:none;transition:opacity .3s">
+        <div id="c2" style="width:28px;height:28px;border-radius:50%;background:#cbd5e1;color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;transition:all .3s">2</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;color:#0f172a;margin-bottom:3px">Sube a DocuSeal y copia el link de firma</div>
+          <div style="font-size:12px;color:#64748b;margin-bottom:10px">Abre DocuSeal, sube el PDF, coloca el campo de firma y copia el link para el cliente</div>
+          <button class="btn btn-s btn-sm" onclick="window.open('https://docuseal.com','_blank')" style="margin-bottom:10px">🔗 Abrir DocuSeal</button>
+          <div style="margin-top:4px">
+            <input type="url" id="ds-link" placeholder="Pega aquí el link de firma de DocuSeal..."
+              style="width:100%;padding:8px 11px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:12px;font-family:inherit"
+              oninput="checkDsLink()">
+          </div>
+          <span id="ok2" style="display:none;font-size:12px;color:#059669;font-weight:700;margin-top:5px;display:none">✓ Link listo</span>
+        </div>
+      </div>
+
+      <div id="blk3" style="display:flex;gap:14px;padding:18px 0 4px;opacity:.35;pointer-events:none;transition:opacity .3s">
+        <div id="c3" style="width:28px;height:28px;border-radius:50%;background:#cbd5e1;color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;transition:all .3s">3</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;color:#0f172a;margin-bottom:3px">Enviar por WhatsApp</div>
+          <div style="font-size:12px;color:#64748b;margin-bottom:10px">Se abre WhatsApp con el mensaje y el link ya redactados para <strong>${a.clienteNombre}</strong> (${a.clienteTel})</div>
+          <button id="wa-btn" class="btn btn-sm" onclick="enviarWA('${aid}')" disabled
+            style="background:#25D366;color:white;border:none;cursor:not-allowed;opacity:.5;transition:all .3s;font-weight:700">
+            📱 Enviar por WhatsApp — ${a.clienteNombre}
+          </button>
+        </div>
+      </div>
+
+    </div>
+  `,`<button class="btn btn-s" onclick="closeModal()">Cerrar</button>`);
+}
+
+function abrirContrato(aid){
+  const html=_buildContratoHTML(aid);
+  if(!html){toast('Error generando contrato','err');return;}
+  // Abre en nueva pestaña via Blob (no requiere permiso de pop-ups)
+  const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.target='_blank';a.rel='noopener';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url),10000);
+  // Actualizar pasos del modal (si están presentes)
+  const ok1=document.getElementById('ok1');if(ok1)ok1.style.display='inline';
+  const c1=document.getElementById('c1');if(c1){c1.style.background='#059669';c1.textContent='✓';}
+  const f1ok=document.getElementById('f1ok');if(f1ok)f1ok.style.display='inline';
+  const f1c=document.getElementById('f1c');if(f1c){f1c.style.background='#059669';f1c.textContent='✓';}
+  const b2=document.getElementById('blk2');if(b2){b2.style.opacity='1';b2.style.pointerEvents='auto';}
+  const c2=document.getElementById('c2');if(c2)c2.style.background='#2563eb';
+  const f2blk=document.getElementById('f2blk');if(f2blk){f2blk.style.opacity='1';f2blk.style.pointerEvents='auto';}
+  const f2c=document.getElementById('f2c');if(f2c)f2c.style.background='#2563eb';
+}
+
+function checkDsLink(){
+  const val=(document.getElementById('ds-link')?.value||'').trim();
+  if(val.startsWith('http')){
+    const ok2=document.getElementById('ok2');
+    if(ok2){ok2.style.display='block';}
+    document.getElementById('c2').style.background='#059669';
+    document.getElementById('c2').textContent='✓';
+    const b3=document.getElementById('blk3');
+    b3.style.opacity='1';b3.style.pointerEvents='auto';
+    document.getElementById('c3').style.background='#25D366';
+    const btn=document.getElementById('wa-btn');
+    btn.disabled=false;btn.style.cursor='pointer';btn.style.opacity='1';
+  }
+}
+
+function enviarWA(aid){
+  const a=ga(aid),veh=a?gv(a.vehiculoId):null;
+  if(!a||!veh)return;
+  const link=(document.getElementById('ds-link')?.value||'').trim();
+  const msg=`Hola ${a.clienteNombre}, le enviamos el contrato de cesión del vehículo ${veh.matricula} (${veh.marca} ${veh.modelo}) de Taller JM / Grupo Motorcar.\n\nPor favor, fírmelo digitalmente desde el siguiente enlace:\n${link}\n\nGracias.`;
+  const raw=a.clienteTel.replace(/[\s\-().+]/g,'');
+  const tel=raw.startsWith('6')||raw.startsWith('7')?'34'+raw:raw;
+  window.open(`https://wa.me/${tel}?text=${encodeURIComponent(msg)}`,'_blank');
+  // Registrar método de firma
+  a.metodoFirma='online';a.fechaFirma=hoy();a.linkFirma=link;
+  save();toast('📱 Enviado por WhatsApp — firma online en curso','ok');
+}
+
+// ──────────────────── HELPER ─────────────────────────────────
+function emptyS(ico,tit,sub=''){
+  return`<div class="empty"><div class="ei">${ico}</div><div class="et">${tit}</div>${sub?`<div class="es">${sub}</div>`:''}</div>`;
+}
+
+// ──────────────────── INIT ───────────────────────────────────
+function fallbackLocal(){
+  db=loadLocalDB();
+  try{const s=localStorage.getItem('cm_v1');_citasCache=s?JSON.parse(s):null;}catch(ex){}
+}
+
+async function initApp(){
+  document.getElementById('content').innerHTML='<div style="text-align:center;padding:60px;color:#888"><div style="font-size:28px;margin-bottom:12px">⏳</div>Conectando...</div>';
+
+  const fsPromise=Promise.all([
+    _fs.collection('appdata').doc('gm_v2').get(),
+    _fs.collection('appdata').doc('cm_v1').get()
+  ]);
+  const timeoutP=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),5000));
+
+  try{
+    const [gmDoc,cmDoc]=await Promise.race([fsPromise,timeoutP]);
+    if(gmDoc.exists){
+      db=gmDoc.data();
+      if(!db.vehiculos)db.vehiculos=V_INIT.map(v=>({...v,estado:'Disponible'}));
+      if(!db.asignaciones)db.asignaciones=[];
+      if(!db.reclamaciones)db.reclamaciones=[];
+    } else {
+      db={vehiculos:V_INIT.map(v=>({...v,estado:'Disponible'})),asignaciones:[],reclamaciones:[]};
+      save();
+    }
+    _citasCache=cmDoc.exists?cmDoc.data():null;
+  }catch(e){
+    console.warn('Firebase no disponible:',e.message);
+    fallbackLocal();
+    toast(e.message==='timeout'?'⚠️ Firebase lento — datos locales':'⚠️ Sin conexión — datos locales','w');
+  }
+  go('dashboard');
+}
+initApp();
+</script>
+</body>
+</html>
