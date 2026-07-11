@@ -753,18 +753,44 @@ function showNuevaAsig(vidPre=null){
     <div id="f-dc" style="${tipo==='Derechocar'?'':'display:none'}">
       ${dcD.length===0?`<div class="empty"><div class="ei">🚫</div><div class="et">Sin vehículos Derechocar disponibles</div></div>`:`
       <div class="fgrid">
-        <div class="fg"><label>Vehículo *</label><select id="dv">${opts(dcD,vidPre)}</select></div>
+        <div class="fg"><label>Vehículo sustitución *</label><select id="dv">${opts(dcD,vidPre)}</select></div>
         <div class="fg"><label>Nº Siniestro *</label><input type="text" id="dsin" placeholder="Número siniestro"></div>
-        <div class="fg"><label>Aseguradora *</label><input type="text" id="daseg" placeholder="Compañía responsable"></div>
-        <div class="fg"><label>Gestor aseguradora</label><input type="text" id="dgest" placeholder="Nombre gestor/perito"></div>
-        <div class="fg"><label>Nombre cliente *</label><input type="text" id="dnom" placeholder="Nombre completo"></div>
+        <div class="fg"><label>Referencia siniestro CA</label><input type="text" id="drefsin" placeholder="Ref. aseguradora contraria"></div>
+        <div class="fg"><label>Fecha Siniestro</label><input type="date" id="dfsini"></div>
+        <div class="fg"><label>Fecha Entrega *</label><input type="date" id="dfe" value="${hoy()}"></div>
+        <div class="fg"><label>Devolución Prevista *</label><input type="date" id="dfd"></div>
+
+        <div class="fg full" style="border-top:1px solid var(--border);padding-top:10px;margin-top:4px">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text3);margin-bottom:6px">👤 Datos del perjudicado</div>
+        </div>
+        <div class="fg"><label>Nombre completo *</label><input type="text" id="dnom" placeholder="Nombre completo"></div>
         <div class="fg"><label>DNI / NIE *</label><input type="text" id="ddni" placeholder="12345678A"></div>
         <div class="fg"><label>Teléfono *</label><input type="tel" id="dtel" placeholder="600 000 000"></div>
         <div class="fg"><label>Email</label><input type="email" id="demail" placeholder="cliente@email.com"></div>
-        <div class="fg"><label>Fecha Entrega *</label><input type="date" id="dfe" value="${hoy()}"></div>
-        <div class="fg"><label>Devolución Prevista *</label><input type="date" id="dfd"></div>
-        <div class="fg"><label>KM Salida</label><input type="number" id="dkm" placeholder="00000"></div>
+        <div class="fg full"><label>Dirección</label><input type="text" id="ddir" placeholder="Calle, número, ciudad, CP"></div>
+
+        <div class="fg full" style="border-top:1px solid var(--border);padding-top:10px;margin-top:4px">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text3);margin-bottom:6px">🚗 Vehículo del perjudicado (el que se repara)</div>
+        </div>
+        <div class="fg"><label>Marca y modelo</label><input type="text" id="dmmpj" placeholder="Toyota Corolla 2020"></div>
+        <div class="fg"><label>Matrícula</label><input type="text" id="dmatpj" placeholder="1234ABC"></div>
+        <div class="fg"><label>Aseguradora propia</label><input type="text" id="daseg" placeholder="Mapfre, Allianz..."></div>
+        <div class="fg"><label>Nº Póliza propia</label><input type="text" id="dpolpj" placeholder="POL-000000"></div>
+
+        <div class="fg full" style="border-top:1px solid var(--border);padding-top:10px;margin-top:4px">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text3);margin-bottom:6px">🚙 Vehículo contrario</div>
+        </div>
+        <div class="fg"><label>Aseguradora contraria</label><input type="text" id="dsegcont" placeholder="Generali, AXA..."></div>
+        <div class="fg"><label>Póliza contraria</label><input type="text" id="dpolcont" placeholder="POL-000000"></div>
+        <div class="fg"><label>Marca y modelo contrario</label><input type="text" id="dmmcont" placeholder="Seat Ibiza"></div>
+        <div class="fg"><label>Matrícula contraria</label><input type="text" id="dmatcont" placeholder="1234XYZ"></div>
+
+        <div class="fg full" style="border-top:1px solid var(--border);padding-top:10px;margin-top:4px">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text3);margin-bottom:6px">🔧 Datos del taller</div>
+        </div>
         <div class="fg"><label>OR Taller</label><input type="text" id="dor" placeholder="OR-2026-000"></div>
+        <div class="fg"><label>Gestor aseguradora</label><input type="text" id="dgest" placeholder="Nombre gestor/perito"></div>
+        <div class="fg"><label>KM Salida</label><input type="number" id="dkm" placeholder="00000"></div>
         <div class="fg full"><label>Notas</label><textarea id="dnot" placeholder="Observaciones..."></textarea></div>
       </div>`}
     </div>
@@ -841,12 +867,19 @@ function submitAsig(){
     if(citasId){const cit=readCitasDB();const t=cit?.trabajos?.find(x=>x.id===citasId);if(t?.trelloCardId)trelloUpdateVehiculo(t.trelloCardId,veh,a);}
     go(curView);
   } else if(tipo==='Derechocar'){
-    const [vid,sin,aseg,nom,dni,tel,fe,fd]=[ v('dv'),v('dsin'),v('daseg'),v('dnom'),v('ddni'),v('dtel'),v('dfe'),v('dfd') ];
-    if(!vid||!sin||!aseg||!nom||!dni||!tel||!fe||!fd){toast('Completa los campos obligatorios (*)','err');return;}
+    const [vid,sin,nom,dni,tel,fe,fd]=[ v('dv'),v('dsin'),v('dnom'),v('ddni'),v('dtel'),v('dfe'),v('dfd') ];
+    if(!vid||!sin||!nom||!dni||!tel||!fe||!fd){toast('Completa los campos obligatorios (*)','err');return;}
     const a={id:uid(),vehiculoId:vid,tipo:'Derechocar',gestor:'Thays',fechaSolicitud:hoy(),
       fechaEntrega:fe,fechaDevolucionPrevista:fd,fechaDevolucionReal:null,
       clienteNombre:nom,clienteDni:dni,clienteTel:tel,clienteEmail:v('demail'),
-      orVinculada:v('dor'),numSiniestro:sin,aseguradora:aseg,gestorAseguradora:v('dgest'),
+      clienteDireccion:v('ddir'),
+      orVinculada:v('dor'),numSiniestro:sin,refSiniestroCA:v('drefsin'),
+      aseguradora:v('daseg'),gestorAseguradora:v('dgest'),
+      fechaSiniestro:v('dfsini'),
+      marcaModeloPerjudicado:v('dmmpj'),matriculaPerjudicado:v('dmatpj'),
+      polizaPropia:v('dpolpj'),
+      aseguradoraContraria:v('dsegcont'),polizaContraria:v('dpolcont'),
+      marcaModeloContrario:v('dmmcont'),matriculaContrario:v('dmatcont'),
       kmSalida:parseInt(v('dkm'))||0,kmEntrada:null,estado:'Activa',notas:v('dnot')};
     const veh=gv(vid);
     const r={id:uid(),asignacionId:a.id,aseguradora:aseg,numSiniestro:sin,
@@ -1588,20 +1621,30 @@ function usarPlantillaConAsig(aid){
   const pl=db.plantillas||[];
   const fd2=s=>s?new Date(s).toLocaleDateString('es-ES'):'—';
 
+  const now2=new Date();
+  const fechaHoyStr=now2.toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'});
+  const horaHoyStr=now2.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
   const filasDatos=[
-    ['NOMBRE',a.clienteNombre||''],
-    ['DNI',a.clienteDni||''],
-    ['TELEFONO',a.clienteTel||''],
-    ['EMAIL',a.clienteEmail||''],
-    ['MATRICULA',veh.matricula||''],
-    ['MARCA',veh.marca||''],
-    ['MODELO',veh.modelo||''],
-    ['AÑO',String(veh.año||'')],
-    ['FECHA_ENTREGA',fd2(a.fechaEntrega)],
-    ['FECHA_DEVOLUCION',fd2(a.fechaDevolucionPrevista)],
+    ['NOMBRE_PERJUDICADO',a.clienteNombre||''],
+    ['DNI_PERJUDICADO',a.clienteDni||''],
+    ['TELEFONO_PERJUDICADO',a.clienteTel||''],
+    ['DIRECCION_PERJUDICADO',a.clienteDireccion||''],
+    ['MARCA_MODELO_PERJUDICADO',a.marcaModeloPerjudicado||''],
+    ['MATRICULA_PERJUDICADO',a.matriculaPerjudicado||''],
+    ['SEGURO_PERJUDICADO',a.aseguradora||''],
+    ['POLIZA',a.polizaPropia||''],
+    ['SINIESTRO',a.numSiniestro||''],
+    ['FECHA_SINIESTRO',fd2(a.fechaSiniestro)],
+    ['SEGURO_CONTRARIO',a.aseguradoraContraria||''],
+    ['POLIZA_CONTRARIO',a.polizaContraria||''],
+    ['MARCA_MODELO_CONTRARIO',a.marcaModeloContrario||''],
+    ['MATRICULA_CONTRARIO',a.matriculaContrario||''],
+    ['MARCA_MODELO_SUSTITUCION',`${veh.marca||''} ${veh.modelo||''}`],
+    ['MATRICULA_SUSTITUCION',veh.matricula||''],
+    ['FECHA_HOY',fechaHoyStr],
+    ['HORA_HOY',horaHoyStr],
     ['OR',a.orVinculada||''],
     ['KM_SALIDA',String(a.kmSalida||0)],
-    ...(a.numSiniestro?[['NUM_SINIESTRO',a.numSiniestro],['ASEGURADORA',a.aseguradora||'']]:[]),
   ];
 
   const tablaHTML=filasDatos.map(([k,val])=>`
@@ -1652,11 +1695,34 @@ async function crearDocRellenado(aid,plId,btn){
   const orig=btn.textContent;
   btn.disabled=true;btn.textContent='⏳ Creando...';
   const fd2=s=>s?new Date(s).toLocaleDateString('es-ES'):'';
+  const now=new Date();
+  const fechaHoy=now.toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'});
+  const horaHoy=now.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
   try{
     const res=await fetch(SHEETS_URL,{method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({action:'crearDocumento',templateUrl:p.url,
         datos:{
+          // Nombres exactos de los {{placeholders}} de las plantillas Derechocar
+          NOMBRE_PERJUDICADO:a.clienteNombre||'',
+          DNI_PERJUDICADO:a.clienteDni||'',
+          TELEFONO_PERJUDICADO:a.clienteTel||'',
+          DIRECCION_PERJUDICADO:a.clienteDireccion||'',
+          MARCA_MODELO_PERJUDICADO:a.marcaModeloPerjudicado||'',
+          MATRICULA_PERJUDICADO:a.matriculaPerjudicado||'',
+          SEGURO_PERJUDICADO:a.aseguradora||'',
+          POLIZA:a.polizaPropia||'',
+          SINIESTRO:a.numSiniestro||'',
+          FECHA_SINIESTRO:fd2(a.fechaSiniestro),
+          SEGURO_CONTRARIO:a.aseguradoraContraria||'',
+          POLIZA_CONTRARIO:a.polizaContraria||'',
+          MARCA_MODELO_CONTRARIO:a.marcaModeloContrario||'',
+          MATRICULA_CONTRARIO:a.matriculaContrario||'',
+          MARCA_MODELO_SUSTITUCION:`${veh.marca||''} ${veh.modelo||''}`,
+          MATRICULA_SUSTITUCION:veh.matricula||'',
+          FECHA_HOY:fechaHoy,
+          HORA_HOY:horaHoy,
+          // Compatibilidad con plantillas antiguas de nombre simple
           NOMBRE:a.clienteNombre||'',DNI:a.clienteDni||'',TELEFONO:a.clienteTel||'',EMAIL:a.clienteEmail||'',
           MATRICULA:veh.matricula||'',MARCA:veh.marca||'',MODELO:veh.modelo||'',AÑO:String(veh.año||''),
           FECHA_ENTREGA:fd2(a.fechaEntrega),FECHA_DEVOLUCION:fd2(a.fechaDevolucionPrevista),
